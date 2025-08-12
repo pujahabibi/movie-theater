@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import MovieSelection from './pages/MovieSelection';
 import SeatSelection from './pages/SeatSelection';
@@ -227,3 +227,4 @@ function App() {
 }
 
 export default App;
+
