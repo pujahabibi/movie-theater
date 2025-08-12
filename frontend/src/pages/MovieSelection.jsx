@@ -75,6 +75,61 @@ function MovieSelection({ bookingData, updateBookingData, nextStep }) {
     }
   };
 
+  const handleTrailerClick = (movie, e) => {
+    e.stopPropagation();
+    setSelectedTrailerMovie(movie);
+    setShowTrailerModal(true);
+  };
+
+  const closeTrailerModal = () => {
+    setShowTrailerModal(false);
+    setSelectedTrailerMovie(null);
+  };
+
+  // Rating Stars Component with animated fill effects
+  const RatingStars = ({ rating, maxRating = 5 }) => {
+    const stars = [];
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 !== 0;
+    
+    for (let i = 0; i < maxRating; i++) {
+      const isFilled = i < fullStars;
+      const isHalf = i === fullStars && hasHalfStar;
+      
+      stars.push(
+        <div key={i} className="relative inline-block">
+          <Star 
+            className={`w-4 h-4 transition-all duration-300 ${
+              isFilled ? 'text-yellow-400 fill-current' : 'text-gray-300'
+            }`}
+          />
+          {isHalf && (
+            <div className="absolute inset-0 overflow-hidden w-1/2">
+              <Star className="w-4 h-4 text-yellow-400 fill-current" />
+            </div>
+          )}
+        </div>
+      );
+    }
+    
+    return (
+      <div className="flex items-center space-x-1 group">
+        {stars.map((star, index) => (
+          <div 
+            key={index} 
+            className="transform transition-transform duration-200 group-hover:scale-110"
+            style={{ animationDelay: `${index * 50}ms` }}
+          >
+            {star}
+          </div>
+        ))}
+        <span className="ml-2 text-sm text-gray-600 font-medium">
+          {rating.toFixed(1)}
+        </span>
+      </div>
+    );
+  };
+
   const formatTime = (dateString) => {
     return new Date(dateString).toLocaleTimeString('en-US', {
       hour: 'numeric',
@@ -331,5 +386,6 @@ function MovieSelection({ bookingData, updateBookingData, nextStep }) {
 }
 
 export default MovieSelection;
+
 
 
