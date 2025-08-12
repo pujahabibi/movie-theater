@@ -163,14 +163,40 @@ function SeatSelection({ bookingData, updateBookingData, nextStep, prevStep }) {
       </div>
 
       <div className="flex flex-col lg:flex-row gap-8">
-        {/* Seating Chart */}
+        {/* Enhanced Seating Chart with Theater Perspective */}
         <div className="flex-1">
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-            {/* Screen */}
-            <div className="text-center mb-8">
-              <div className="bg-gradient-to-r from-gray-300 to-gray-400 text-gray-800 py-2 px-8 rounded-full inline-block font-bold">
-                SCREEN
+          <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10 shadow-2xl relative overflow-hidden">
+            {/* Background theater ambiance */}
+            <div className="absolute inset-0 bg-gradient-to-b from-purple-900/20 via-blue-900/10 to-black/30 rounded-3xl"></div>
+            
+            {/* Enhanced Cinema Screen with Glow Effects */}
+            <div className="text-center mb-12 relative z-10">
+              <div className="relative inline-block">
+                {/* Screen glow effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-400 via-white to-blue-400 rounded-2xl blur-xl opacity-30 scale-110"></div>
+                
+                {/* Main screen */}
+                <div className="relative bg-gradient-to-r from-gray-100 via-white to-gray-100 text-gray-800 py-4 px-16 rounded-2xl font-bold text-lg shadow-2xl border-4 border-gray-300">
+                  <div className="flex items-center justify-center space-x-3">
+                    <Monitor className="w-6 h-6" />
+                    <span>CINEMA SCREEN</span>
+                    <Monitor className="w-6 h-6" />
+                  </div>
+                  
+                  {/* Screen reflection effect */}
+                  <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-transparent to-transparent rounded-2xl"></div>
+                </div>
+                
+                {/* Screen base/stand */}
+                <div className="mt-2 w-32 h-2 bg-gradient-to-r from-gray-400 to-gray-500 rounded-full mx-auto shadow-lg"></div>
+                
+                {/* Ambient lighting effects */}
+                <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 w-64 h-16 bg-gradient-to-b from-blue-400/20 to-transparent rounded-full blur-2xl"></div>
+                <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-48 h-8 bg-gradient-to-t from-white/10 to-transparent rounded-full blur-xl"></div>
               </div>
+              
+              {/* Theater perspective indicator */}
+              <p className="text-white/60 text-sm mt-4 font-medium">Premium Theater Experience</p>
             </div>
 
             {/* Seats */}
@@ -307,4 +333,5 @@ function SeatSelection({ bookingData, updateBookingData, nextStep, prevStep }) {
 }
 
 export default SeatSelection;
+
 
