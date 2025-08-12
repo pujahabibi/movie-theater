@@ -35,12 +35,48 @@ function SeatSelection({ bookingData, updateBookingData, nextStep, prevStep }) {
     const isSelected = selectedSeats.some(s => s.id === seat.id);
     let newSelection;
     
+    // Add ripple effect
+    const seatElement = document.querySelector(`[data-seat-id="${seat.id}"]`);
+    if (seatElement) {
+      const ripple = document.createElement('div');
+      ripple.classList.add('ripple-effect');
+      const rect = seatElement.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      ripple.style.width = ripple.style.height = size + 'px';
+      ripple.style.left = '50%';
+      ripple.style.top = '50%';
+      ripple.style.transform = 'translate(-50%, -50%) scale(0)';
+      seatElement.appendChild(ripple);
+      
+      // Remove ripple after animation
+      setTimeout(() => {
+        if (ripple.parentNode) {
+          ripple.parentNode.removeChild(ripple);
+        }
+      }, 600);
+      
+      // Add spring animation
+      seatElement.classList.add('seat-spring-animation');
+      setTimeout(() => {
+        seatElement.classList.remove('seat-spring-animation');
+      }, 500);
+    }
+    
     if (isSelected) {
       newSelection = selectedSeats.filter(s => s.id !== seat.id);
     } else {
       // Limit to 8 seats maximum
       if (selectedSeats.length >= 8) {
-        alert('You can select a maximum of 8 seats.');
+        // Enhanced alert with better UX
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in';
+        alertDiv.textContent = 'Maximum 8 seats allowed per booking';
+        document.body.appendChild(alertDiv);
+        setTimeout(() => {
+          if (alertDiv.parentNode) {
+            alertDiv.parentNode.removeChild(alertDiv);
+          }
+        }, 3000);
         return;
       }
       newSelection = [...selectedSeats, seat];
@@ -431,6 +467,7 @@ function SeatSelection({ bookingData, updateBookingData, nextStep, prevStep }) {
 }
 
 export default SeatSelection;
+
 
 
 
