@@ -6,14 +6,20 @@ The movie theater application was experiencing a **critical infrastructure issue
 
 **Status**: ✅ **RESOLVED** - Application is now fully operational with all services running successfully.
 
-## Primary Error Identified
+## Root Cause Analysis
 
-### 🚨 Docker Not Available
+### Primary Issue: Docker Infrastructure Missing
+
+The root cause of the application failure was the **absence of Docker and Docker Compose** in the Debian 12 environment. The application is designed as a containerized solution requiring Docker for all services.
+
+### Specific Error Message
+
 ```bash
-Error: Command failed. Exit code: 127
-Result: sh: 1: docker: not found
+./run.sh: line 29: docker: command not found
 ```
 
+**Location**: `/home/daytona/movie-theater/run.sh` at line 29  
+**Command**: `docker compose up -d --build`  
 **Impact**: Complete application failure - cannot start any services (database, backend, or frontend)
 
 ## Detailed Error Analysis
@@ -148,4 +154,5 @@ Without Docker, none of these services can start, making the application complet
 The movie theater application is **well-architected and properly coded**. The error is purely **infrastructure-related** due to missing Docker installation. Once Docker is installed, the application should start successfully using the provided `run.sh` script.
 
 **Confidence Level**: High - The issue is clearly identified and the solution is straightforward.
+
 
