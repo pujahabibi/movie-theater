@@ -492,11 +492,114 @@ function MovieSelection({ bookingData, updateBookingData, nextStep }) {
           </p>
         )}
       </div>
+
+      {/* Movie Trailer Preview Modal with Backdrop Blur */}
+      {showTrailerModal && selectedTrailerMovie && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Enhanced Backdrop with Blur */}
+          <div 
+            className="absolute inset-0 bg-black/60 backdrop-blur-xl transition-all duration-500"
+            onClick={closeTrailerModal}
+          ></div>
+          
+          {/* Modal Container with Glassmorphism */}
+          <div className="relative z-10 w-full max-w-4xl mx-auto animate-fade-in">
+            <div className="bg-white/10 backdrop-blur-2xl rounded-3xl border border-white/20 shadow-2xl overflow-hidden">
+              {/* Modal Header */}
+              <div className="flex items-center justify-between p-6 border-b border-white/20">
+                <div>
+                  <h3 className="text-2xl font-bold text-white mb-1">
+                    🎬 {selectedTrailerMovie.title}
+                  </h3>
+                  <p className="text-white/70 text-sm">Movie Trailer Preview</p>
+                </div>
+                <button
+                  onClick={closeTrailerModal}
+                  className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-300 hover:scale-110"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              
+              {/* Trailer Content */}
+              <div className="p-6">
+                {/* Placeholder for trailer video */}
+                <div className="aspect-video bg-black/50 rounded-2xl mb-6 flex items-center justify-center relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 via-transparent to-blue-500/20"></div>
+                  <div className="text-center z-10">
+                    <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mb-4 mx-auto hover:scale-110 transition-transform duration-300 cursor-pointer">
+                      <svg className="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <p className="text-white/80 text-lg font-medium">Trailer Preview</p>
+                    <p className="text-white/60 text-sm mt-1">Click to play trailer</p>
+                  </div>
+                  
+                  {/* Animated background elements */}
+                  <div className="absolute top-4 right-4 w-16 h-16 bg-yellow-400/20 rounded-full blur-xl animate-pulse"></div>
+                  <div className="absolute bottom-4 left-4 w-12 h-12 bg-purple-400/20 rounded-full blur-lg animate-pulse animation-delay-2000"></div>
+                </div>
+                
+                {/* Movie Details in Modal */}
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <h4 className="text-lg font-semibold text-white mb-3">Movie Details</h4>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-center text-white/70">
+                        <Clock className="w-4 h-4 mr-2" />
+                        <span>{selectedTrailerMovie.duration} minutes</span>
+                      </div>
+                      <div className="flex items-center text-white/70">
+                        <Film className="w-4 h-4 mr-2" />
+                        <span>{selectedTrailerMovie.genre}</span>
+                      </div>
+                      <div className="flex items-center text-white/70">
+                        <span className="mr-2">⭐</span>
+                        <RatingStars rating={parseFloat(selectedTrailerMovie.imdbRating) || 4.5} />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h4 className="text-lg font-semibold text-white mb-3">Synopsis</h4>
+                    <p className="text-white/70 text-sm leading-relaxed">
+                      {selectedTrailerMovie.description}
+                    </p>
+                  </div>
+                </div>
+                
+                {/* Action Buttons */}
+                <div className="flex items-center justify-center space-x-4 mt-8">
+                  <button
+                    onClick={() => {
+                      handleMovieSelect(selectedTrailerMovie);
+                      closeTrailerModal();
+                    }}
+                    className="px-6 py-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-semibold rounded-xl hover:from-yellow-500 hover:to-orange-600 transition-all duration-300 hover:scale-105 shadow-lg"
+                  >
+                    🎟️ Select This Movie
+                  </button>
+                  <button
+                    onClick={closeTrailerModal}
+                    className="px-6 py-3 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-xl hover:bg-white/20 transition-all duration-300 border border-white/20"
+                  >
+                    Close Preview
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
 export default MovieSelection;
+
 
 
 
