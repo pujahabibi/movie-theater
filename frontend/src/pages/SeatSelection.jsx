@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Users, DollarSign } from 'lucide-react';
+import { ArrowLeft, Users, DollarSign, Monitor, Armchair, Crown, Star } from 'lucide-react';
 import api from '../api';
 
 function SeatSelection({ bookingData, updateBookingData, nextStep, prevStep }) {
