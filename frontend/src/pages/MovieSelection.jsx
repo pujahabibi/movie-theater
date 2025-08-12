@@ -232,32 +232,63 @@ function MovieSelection({ bookingData, updateBookingData, nextStep }) {
         <p className="text-blue-200 text-lg">Select from our premium collection of blockbuster movies</p>
       </div>
 
-      {/* Movies Grid - Enhanced Design */}
+      {/* Movies Grid - Enhanced Design with 3D Effects */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
         {movies.map((movie) => (
           <div
             key={movie.id}
             onClick={() => handleMovieSelect(movie)}
             className={`
-              movie-card bg-white rounded-2xl overflow-hidden shadow-2xl transform transition-all duration-300 hover:scale-105 cursor-pointer
-              ${selectedMovie?.id === movie.id ? 'ring-4 ring-yellow-400 scale-105 shadow-yellow-400/25' : 'hover:shadow-blue-500/25'}
+              group relative bg-white/5 backdrop-blur-sm rounded-3xl overflow-hidden shadow-2xl 
+              transform transition-all duration-500 cursor-pointer perspective-1000
+              hover:scale-105 hover:rotate-y-5 hover:shadow-3xl
+              ${selectedMovie?.id === movie.id 
+                ? 'ring-4 ring-yellow-400 scale-105 shadow-yellow-400/50 animate-pulse-glow' 
+                : 'hover:shadow-purple-500/30'
+              }
             `}
+            style={{
+              transformStyle: 'preserve-3d',
+            }}
           >
-            {/* Movie Poster */}
-            <div className="relative aspect-w-2 aspect-h-3 overflow-hidden">
+            {/* Enhanced Movie Poster with 3D Transform and Glow */}
+            <div className="relative aspect-[2/3] overflow-hidden rounded-t-3xl">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10"></div>
+              
               <img
                 src={movie.posterUrl || `https://via.placeholder.com/400x600/667eea/FFFFFF?text=${encodeURIComponent(movie.title)}`}
                 alt={movie.title}
-                className="w-full h-80 object-cover transition-transform duration-300 hover:scale-110"
+                className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:brightness-110"
               />
-              {/* Rating Badge */}
-              <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-white text-sm font-bold ${getRatingColor(movie.rating)}`}>
+              
+              {/* Glow effect overlay */}
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 via-transparent to-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              
+              {/* Rating Badge with enhanced styling */}
+              <div className={`absolute top-4 right-4 px-3 py-2 rounded-full text-white text-sm font-bold backdrop-blur-sm border border-white/20 z-20 ${getRatingColor(movie.rating)}`}>
                 {movie.rating}
               </div>
-              {/* Price Badge */}
-              <div className="absolute bottom-4 left-4 bg-black/70 backdrop-blur-sm px-3 py-2 rounded-lg">
+              
+              {/* Price Badge with glassmorphism */}
+              <div className="absolute bottom-4 left-4 bg-black/50 backdrop-blur-md px-4 py-2 rounded-xl border border-white/10 z-20">
                 <span className="text-yellow-400 font-bold text-lg">${movie.price}</span>
               </div>
+              
+              {/* Trailer Button */}
+              <button
+                onClick={(e) => handleTrailerClick(movie, e)}
+                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
+                         bg-white/20 backdrop-blur-md rounded-full p-4 text-white opacity-0 
+                         group-hover:opacity-100 transition-all duration-300 hover:scale-110 
+                         hover:bg-white/30 z-20"
+              >
+                <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+                </svg>
+              </button>
+              
+              {/* Shimmer effect on hover */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out"></div>
             </div>
             
             {/* Movie Details */}
@@ -386,6 +417,7 @@ function MovieSelection({ bookingData, updateBookingData, nextStep }) {
 }
 
 export default MovieSelection;
+
 
 
 
