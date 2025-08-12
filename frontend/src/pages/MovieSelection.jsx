@@ -10,6 +10,8 @@ function MovieSelection({ bookingData, updateBookingData, nextStep }) {
   const [loading, setLoading] = useState(true);
   const [loadingShowtimes, setLoadingShowtimes] = useState(false);
   const [error, setError] = useState(null);
+  const [showTrailerModal, setShowTrailerModal] = useState(false);
+  const [selectedTrailerMovie, setSelectedTrailerMovie] = useState(null);
 
   useEffect(() => {
     fetchMovies();
@@ -302,3 +304,4 @@ function MovieSelection({ bookingData, updateBookingData, nextStep }) {
 }
 
 export default MovieSelection;
+
