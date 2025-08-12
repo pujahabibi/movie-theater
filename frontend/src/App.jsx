@@ -285,71 +285,85 @@ function App() {
           </div>
         )}
 
-        {/* Main Content */}
+        {/* Main Content with Smooth Page Transitions */}
         <main className="relative">
-          <Routes>
-            <Route path="/" element={<Navigate to="/movies" replace />} />
-            <Route 
-              path="/movies" 
-              element={
-                <MovieSelection
-                  bookingData={bookingData}
-                  updateBookingData={updateBookingData}
-                  nextStep={() => nextStep('/seats')}
-                  prevStep={() => prevStep('/')}
-                  resetBooking={resetBooking}
-                />
-              } 
-            />
-            <Route 
-              path="/seats" 
-              element={
-                <SeatSelection
-                  bookingData={bookingData}
-                  updateBookingData={updateBookingData}
-                  nextStep={() => nextStep('/snacks')}
-                  prevStep={() => prevStep('/movies')}
-                  resetBooking={resetBooking}
-                />
-              } 
-            />
-            <Route 
-              path="/snacks" 
-              element={
-                <SnackSelection
-                  bookingData={bookingData}
-                  updateBookingData={updateBookingData}
-                  nextStep={() => nextStep('/checkout')}
-                  prevStep={() => prevStep('/seats')}
-                  resetBooking={resetBooking}
-                />
-              } 
-            />
-            <Route 
-              path="/checkout" 
-              element={
-                <Checkout
-                  bookingData={bookingData}
-                  updateBookingData={updateBookingData}
-                  nextStep={() => nextStep('/confirmation')}
-                  prevStep={() => prevStep('/snacks')}
-                  resetBooking={resetBooking}
-                />
-              } 
-            />
-            <Route 
-              path="/confirmation" 
-              element={
-                <BookingConfirmation
-                  bookingData={bookingData}
-                  updateBookingData={updateBookingData}
-                  nextStep={nextStep}
-                  prevStep={prevStep}
-                  resetBooking={resetBooking}
-                />
-              } 
-            />
-          </Routes>
+          <div className={`transition-all duration-500 ease-in-out ${
+            isTransitioning ? 'opacity-0 transform scale-95 blur-sm' : 'opacity-100 transform scale-100 blur-0'
+          }`}>
+            <Routes>
+              <Route path="/" element={<Navigate to="/movies" replace />} />
+              <Route 
+                path="/movies" 
+                element={
+                  <div className="animate-fade-in">
+                    <MovieSelection
+                      bookingData={bookingData}
+                      updateBookingData={updateBookingData}
+                      nextStep={() => nextStep('/seats')}
+                      prevStep={() => prevStep('/')}
+                      resetBooking={resetBooking}
+                    />
+                  </div>
+                } 
+              />
+              <Route 
+                path="/seats" 
+                element={
+                  <div className="animate-fade-in">
+                    <SeatSelection
+                      bookingData={bookingData}
+                      updateBookingData={updateBookingData}
+                      nextStep={() => nextStep('/snacks')}
+                      prevStep={() => prevStep('/movies')}
+                      resetBooking={resetBooking}
+                    />
+                  </div>
+                } 
+              />
+              <Route 
+                path="/snacks" 
+                element={
+                  <div className="animate-fade-in">
+                    <SnackSelection
+                      bookingData={bookingData}
+                      updateBookingData={updateBookingData}
+                      nextStep={() => nextStep('/checkout')}
+                      prevStep={() => prevStep('/seats')}
+                      resetBooking={resetBooking}
+                    />
+                  </div>
+                } 
+              />
+              <Route 
+                path="/checkout" 
+                element={
+                  <div className="animate-fade-in">
+                    <Checkout
+                      bookingData={bookingData}
+                      updateBookingData={updateBookingData}
+                      nextStep={() => nextStep('/confirmation')}
+                      prevStep={() => prevStep('/snacks')}
+                      resetBooking={resetBooking}
+                    />
+                  </div>
+                } 
+              />
+              <Route 
+                path="/confirmation" 
+                element={
+                  <div className="animate-fade-in">
+                    <BookingConfirmation
+                      bookingData={bookingData}
+                      updateBookingData={updateBookingData}
+                      nextStep={nextStep}
+                      prevStep={prevStep}
+                      resetBooking={resetBooking}
+                    />
+                  </div>
+                } 
+              />
+            </Routes>
+          </div>
         </main>
 
         {/* Enhanced Footer */}
@@ -371,6 +385,7 @@ function App() {
 }
 
 export default App;
+
 
 
 
