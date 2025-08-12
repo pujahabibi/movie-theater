@@ -114,11 +114,38 @@ function MovieSelection({ bookingData, updateBookingData, nextStep }) {
     return colors[rating] || 'bg-blue-500';
   };
 
+  // Skeleton Loading Component
+  const MovieSkeleton = () => (
+    <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 animate-pulse">
+      <div className="aspect-[2/3] bg-white/10 rounded-xl mb-4"></div>
+      <div className="space-y-3">
+        <div className="h-6 bg-white/10 rounded-lg w-3/4"></div>
+        <div className="h-4 bg-white/10 rounded w-1/2"></div>
+        <div className="flex space-x-2">
+          <div className="h-6 bg-white/10 rounded-full w-16"></div>
+          <div className="h-6 bg-white/10 rounded-full w-12"></div>
+        </div>
+        <div className="h-4 bg-white/10 rounded w-full"></div>
+        <div className="h-4 bg-white/10 rounded w-2/3"></div>
+      </div>
+    </div>
+  );
+
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center h-64">
-        <div className="spinner mb-4"></div>
-        <p className="text-white text-lg">Loading amazing movies...</p>
+      <div className="fade-in">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-bold text-white mb-4 bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+            🎬 Choose Your Movie Experience
+          </h2>
+          <p className="text-blue-200 text-lg">Loading our premium collection of blockbuster movies...</p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+          {[...Array(6)].map((_, index) => (
+            <MovieSkeleton key={index} />
+          ))}
+        </div>
       </div>
     );
   }
@@ -304,4 +331,5 @@ function MovieSelection({ bookingData, updateBookingData, nextStep }) {
 }
 
 export default MovieSelection;
+
 
