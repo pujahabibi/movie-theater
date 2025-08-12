@@ -366,16 +366,69 @@ function App() {
           </div>
         </main>
 
-        {/* Enhanced Footer */}
-        <footer className="mt-16 text-center text-blue-200">
-          <div className="border-t border-white/20 pt-8">
-            <p className="text-sm">
-              © 2025 CineMax Theater - Where Movies Come to Life
-            </p>
-            <div className="flex justify-center items-center mt-4 space-x-6 text-xs">
-              <span>📞 1-800-CINEMAX</span>
-              <span>📧 info@cinemax.com</span>
-              <span>📍 123 Movie Street, Cinema City</span>
+        {/* Enhanced Footer with Glassmorphism */}
+        <footer className="mt-20 relative">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10 shadow-2xl relative overflow-hidden">
+              {/* Subtle gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 via-blue-500/5 to-indigo-500/5 rounded-3xl"></div>
+              
+              {/* Footer content */}
+              <div className="relative z-10 text-center text-blue-200">
+                <div className="mb-6">
+                  <h3 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 mb-2">
+                    🎬 CineMax Theater
+                  </h3>
+                  <p className="text-sm text-white/70">
+                    Where Movies Come to Life
+                  </p>
+                </div>
+                
+                <div className="grid md:grid-cols-3 gap-6 mb-6">
+                  <div className="space-y-2">
+                    <h4 className="font-semibold text-white/90">Contact</h4>
+                    <div className="space-y-1 text-xs text-white/60">
+                      <div className="flex items-center justify-center space-x-2">
+                        <span>📞</span>
+                        <span>1-800-CINEMAX</span>
+                      </div>
+                      <div className="flex items-center justify-center space-x-2">
+                        <span>📧</span>
+                        <span>info@cinemax.com</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <h4 className="font-semibold text-white/90">Location</h4>
+                    <div className="text-xs text-white/60">
+                      <div className="flex items-center justify-center space-x-2">
+                        <span>📍</span>
+                        <span>123 Movie Street, Cinema City</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <h4 className="font-semibold text-white/90">Experience</h4>
+                    <div className="flex justify-center items-center space-x-4 text-xs text-white/60">
+                      <span>🎆 4K Ultra HD</span>
+                      <span>🔊 Dolby Atmos</span>
+                      <span>🪑 Luxury Seating</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="border-t border-white/20 pt-6">
+                  <p className="text-xs text-white/50">
+                    © 2025 CineMax Theater. All rights reserved.
+                  </p>
+                </div>
+              </div>
+              
+              {/* Decorative elements */}
+              <div className="absolute top-4 right-4 w-12 h-12 bg-gradient-to-br from-purple-400/10 to-pink-400/10 rounded-full blur-sm animate-pulse"></div>
+              <div className="absolute bottom-4 left-4 w-8 h-8 bg-gradient-to-br from-blue-400/10 to-cyan-400/10 rounded-full blur-sm animate-pulse animation-delay-2000"></div>
             </div>
           </div>
         </footer>
@@ -385,6 +438,7 @@ function App() {
 }
 
 export default App;
+
 
 
 
