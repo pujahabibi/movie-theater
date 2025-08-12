@@ -291,32 +291,44 @@ function MovieSelection({ bookingData, updateBookingData, nextStep }) {
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out"></div>
             </div>
             
-            {/* Movie Details */}
-            <div className="p-6">
-              <h3 className="text-2xl font-bold text-gray-900 mb-3 line-clamp-1">{movie.title}</h3>
-              <p className="text-gray-600 text-sm mb-4 line-clamp-3 leading-relaxed">{movie.description}</p>
+            {/* Enhanced Movie Details */}
+            <div className="p-6 bg-white/5 backdrop-blur-sm">
+              <h3 className="text-2xl font-bold text-white mb-3 line-clamp-1 group-hover:text-yellow-300 transition-colors duration-300">
+                {movie.title}
+              </h3>
+              <p className="text-white/70 text-sm mb-4 line-clamp-3 leading-relaxed">
+                {movie.description}
+              </p>
               
-              {/* Movie Info */}
+              {/* Enhanced Movie Info with Rating Stars */}
               <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center space-x-4 text-sm text-gray-500">
+                <div className="flex items-center space-x-4 text-sm text-white/60">
                   <span className="flex items-center">
                     <Clock className="w-4 h-4 mr-1" />
                     {movie.duration} min
                   </span>
                   <span className="flex items-center">
-                    <Star className="w-4 h-4 mr-1 text-yellow-500" />
-                    {movie.rating}
+                    <Film className="w-4 h-4 mr-1" />
+                    {movie.genre}
                   </span>
                 </div>
               </div>
               
-              {/* Genre Tag */}
+              {/* Rating Stars with Animation */}
+              <div className="mb-4">
+                <RatingStars rating={parseFloat(movie.imdbRating) || 4.5} />
+              </div>
+              
+              {/* Enhanced Genre Tag and Selection Status */}
               <div className="flex justify-between items-center">
-                <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${getGenreColor(movie.genre)}`}>
+                <span className="inline-block px-4 py-2 rounded-full text-xs font-semibold bg-gradient-to-r from-purple-500/20 to-blue-500/20 text-white border border-white/20 backdrop-blur-sm">
                   {movie.genre}
                 </span>
                 {selectedMovie?.id === movie.id && (
-                  <span className="text-green-500 font-semibold text-sm">✓ Selected</span>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                    <span className="text-green-300 font-semibold text-sm">Selected</span>
+                  </div>
                 )}
               </div>
             </div>
@@ -417,6 +429,7 @@ function MovieSelection({ bookingData, updateBookingData, nextStep }) {
 }
 
 export default MovieSelection;
+
 
 
 
