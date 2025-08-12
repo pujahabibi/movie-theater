@@ -55,11 +55,19 @@ function App() {
   };
 
   const nextStep = (path) => {
-    navigate(path);
+    setIsTransitioning(true);
+    setTimeout(() => {
+      navigate(path);
+      setTimeout(() => setIsTransitioning(false), 300);
+    }, 150);
   };
 
   const prevStep = (path) => {
-    navigate(path);
+    setIsTransitioning(true);
+    setTimeout(() => {
+      navigate(path);
+      setTimeout(() => setIsTransitioning(false), 300);
+    }, 150);
   };
 
   const resetBooking = () => {
@@ -250,5 +258,6 @@ function App() {
 }
 
 export default App;
+
 
 
