@@ -199,31 +199,75 @@ function SeatSelection({ bookingData, updateBookingData, nextStep, prevStep }) {
               <p className="text-white/60 text-sm mt-4 font-medium">Premium Theater Experience</p>
             </div>
 
-            {/* Seats */}
-            <div className="max-w-2xl mx-auto">
-              {rows.map((row) => (
-                <div key={row} className="flex items-center justify-center mb-2">
-                  <div className="w-6 text-white font-bold text-sm flex items-center justify-center">
-                    {row}
+            {/* Enhanced Seats with Theater Perspective and Ripple Effects */}
+            <div className="max-w-4xl mx-auto relative" style={{ perspective: '1000px' }}>
+              {/* Theater perspective container */}
+              <div className="transform-gpu" style={{ transformStyle: 'preserve-3d' }}>
+                {rows.map((row, rowIndex) => (
+                  <div 
+                    key={row} 
+                    className="flex items-center justify-center mb-3 relative"
+                    style={{
+                      transform: `rotateX(${Math.max(0, (rows.length - rowIndex - 1) * 2)}deg) translateZ(${rowIndex * 5}px)`,
+                      transformOrigin: 'center bottom'
+                    }}
+                  >
+                    {/* Row label - left */}
+                    <div className="w-8 text-white/80 font-bold text-sm flex items-center justify-center bg-white/10 backdrop-blur-sm rounded-lg h-10 mr-4 border border-white/20">
+                      {row}
+                    </div>
+                    
+                    {/* Seats row */}
+                    <div className="flex space-x-2 relative">
+                      {seatMap[row].map((seat, seatIndex) => (
+                        <button
+                          key={seat.id}
+                          onClick={() => handleSeatClick(seat)}
+                          disabled={!seat.isAvailable}
+                          className={getSeatClass(seat)}
+                          title={`${row}${seat.seatNumber} - ${seat.seatType} - ${showtime.movie.price}`}
+                          style={{ animationDelay: `${(rowIndex * seatMap[row].length + seatIndex) * 50}ms` }}
+                        >
+                          {/* Seat content with icon and number */}
+                          <div className="flex flex-col items-center justify-center relative z-10">
+                            <div className="text-xs opacity-80 mb-0.5">
+                              {getSeatIcon(seat.seatType)}
+                            </div>
+                            <span className="text-xs font-bold">{seat.seatNumber}</span>
+                          </div>
+                          
+                          {/* Ripple effect on click */}
+                          <div className="absolute inset-0 rounded-lg overflow-hidden">
+                            <div className="ripple-effect"></div>
+                          </div>
+                          
+                          {/* Hover glow effect */}
+                          <div className="absolute inset-0 bg-white/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm scale-110"></div>
+                          
+                          {/* Selection pulse effect */}
+                          {selectedSeats.some(s => s.id === seat.id) && (
+                            <div className="absolute inset-0 bg-yellow-400/30 rounded-lg animate-ping"></div>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                    
+                    {/* Row label - right */}
+                    <div className="w-8 text-white/80 font-bold text-sm flex items-center justify-center bg-white/10 backdrop-blur-sm rounded-lg h-10 ml-4 border border-white/20">
+                      {row}
+                    </div>
+                    
+                    {/* Row shadow for depth */}
+                    <div 
+                      className="absolute inset-0 bg-black/10 rounded-lg blur-sm -z-10"
+                      style={{ transform: 'translateY(4px) translateZ(-10px)' }}
+                    ></div>
                   </div>
-                  <div className="flex mx-4">
-                    {seatMap[row].map((seat) => (
-                      <button
-                        key={seat.id}
-                        onClick={() => handleSeatClick(seat)}
-                        disabled={!seat.isAvailable}
-                        className={getSeatClass(seat)}
-                        title={`${row}${seat.seatNumber} - ${seat.seatType} - $${showtime.movie.price}`}
-                      >
-                        {seat.seatNumber}
-                      </button>
-                    ))}
-                  </div>
-                  <div className="w-6 text-white font-bold text-sm flex items-center justify-center">
-                    {row}
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
+              
+              {/* Theater floor gradient */}
+              <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none -z-10"></div>
             </div>
 
             {/* Legend */}
@@ -333,5 +377,6 @@ function SeatSelection({ bookingData, updateBookingData, nextStep, prevStep }) {
 }
 
 export default SeatSelection;
+
 
 
