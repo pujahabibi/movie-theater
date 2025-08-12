@@ -184,49 +184,102 @@ function App() {
           </div>
         </header>
 
-        {/* Enhanced Progress Bar */}
+        {/* Enhanced Progress Bar with Glassmorphism */}
         {location.pathname !== '/confirmation' && (
-          <div className="max-w-4xl mx-auto mb-12">
-            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
-              <div className="flex items-center justify-between">
-                {steps.map((step, index) => (
-                  <div key={step.id} className="flex items-center">
-                    <div className="flex flex-col items-center">
-                      <div
-                        className={`
-                          w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold transition-all duration-300 transform
-                          ${currentStep >= step.id
-                            ? 'bg-gradient-to-r from-green-400 to-emerald-500 text-white shadow-lg scale-110'
-                            : currentStep === step.id - 1
-                            ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white shadow-lg animate-pulse'
-                            : 'bg-white/20 text-white/60'
-                          }
-                        `}
-                      >
-                        {currentStep > step.id ? '✓' : step.icon}
+          <div className="max-w-5xl mx-auto mb-12 px-4">
+            <div className="relative">
+              {/* Glassmorphism container with enhanced effects */}
+              <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10 shadow-2xl relative overflow-hidden">
+                {/* Subtle gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 via-blue-500/5 to-indigo-500/5 rounded-3xl"></div>
+                
+                {/* Progress content */}
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between">
+                    {steps.map((step, index) => (
+                      <div key={step.id} className="flex items-center">
+                        <div className="flex flex-col items-center group">
+                          {/* Enhanced step circle with glassmorphism */}
+                          <div className="relative">
+                            <div
+                              className={`
+                                w-20 h-20 rounded-full flex items-center justify-center text-2xl font-bold 
+                                transition-all duration-500 transform relative overflow-hidden
+                                ${currentStep >= step.id
+                                  ? 'bg-gradient-to-br from-green-400 via-emerald-500 to-teal-500 text-white shadow-2xl scale-110 animate-pulse-glow'
+                                  : currentStep === step.id - 1
+                                  ? 'bg-gradient-to-br from-yellow-400 via-orange-500 to-red-500 text-white shadow-2xl animate-pulse scale-105'
+                                  : 'bg-white/10 backdrop-blur-sm text-white/70 border border-white/20'
+                                }
+                                hover:scale-105 group-hover:shadow-xl
+                              `}
+                            >
+                              {/* Inner glow effect */}
+                              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/20 to-transparent opacity-50"></div>
+                              
+                              {/* Step content */}
+                              <span className="relative z-10">
+                                {currentStep > step.id ? '✓' : step.icon}
+                              </span>
+                              
+                              {/* Animated border for current step */}
+                              {currentStep === step.id && (
+                                <div className="absolute inset-0 rounded-full border-2 border-yellow-400 animate-spin-slow opacity-60"></div>
+                              )}
+                            </div>
+                            
+                            {/* Floating particles around active step */}
+                            {currentStep === step.id && (
+                              <>
+                                <div className="absolute -top-2 -right-2 w-2 h-2 bg-yellow-400 rounded-full animate-ping"></div>
+                                <div className="absolute -bottom-2 -left-2 w-1.5 h-1.5 bg-orange-400 rounded-full animate-ping animation-delay-1000"></div>
+                              </>
+                            )}
+                          </div>
+                          
+                          {/* Enhanced step label */}
+                          <span
+                            className={`
+                              mt-4 text-sm font-semibold transition-all duration-300 text-center
+                              ${currentStep >= step.id 
+                                ? 'text-green-300 text-shadow-glow' 
+                                : currentStep === step.id - 1
+                                ? 'text-yellow-300 text-shadow-glow animate-pulse'
+                                : 'text-white/60'
+                              }
+                            `}
+                          >
+                            {step.name}
+                          </span>
+                        </div>
+                        
+                        {/* Enhanced connecting line */}
+                        {index < steps.length - 1 && (
+                          <div className="relative mx-6">
+                            <div
+                              className={`
+                                w-32 h-1 rounded-full transition-all duration-700 relative overflow-hidden
+                                ${currentStep > step.id
+                                  ? 'bg-gradient-to-r from-green-400 via-emerald-500 to-teal-500 shadow-lg'
+                                  : 'bg-white/10'
+                                }
+                              `}
+                            >
+                              {/* Animated progress fill */}
+                              {currentStep > step.id && (
+                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer"></div>
+                              )}
+                            </div>
+                          </div>
+                        )}
                       </div>
-                      <span
-                        className={`
-                          mt-3 text-sm font-medium transition-colors duration-300
-                          ${currentStep >= step.id ? 'text-green-300' : 'text-white/60'}
-                        `}
-                      >
-                        {step.name}
-                      </span>
-                    </div>
-                    {index < steps.length - 1 && (
-                      <div
-                        className={`
-                          w-24 h-1 mx-4 rounded-full transition-all duration-500
-                          ${currentStep > step.id
-                            ? 'bg-gradient-to-r from-green-400 to-emerald-500'
-                            : 'bg-white/20'
-                          }
-                        `}
-                      />
-                    )}
+                    ))}
                   </div>
-                ))}
+                </div>
+                
+                {/* Decorative elements */}
+                <div className="absolute top-4 right-4 w-8 h-8 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-sm"></div>
+                <div className="absolute bottom-4 left-4 w-6 h-6 bg-gradient-to-br from-blue-400/20 to-cyan-400/20 rounded-full blur-sm"></div>
               </div>
             </div>
           </div>
@@ -318,6 +371,7 @@ function App() {
 }
 
 export default App;
+
 
 
 
