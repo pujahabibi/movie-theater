@@ -76,17 +76,47 @@ function SeatSelection({ bookingData, updateBookingData, nextStep, prevStep }) {
   };
 
   const getSeatClass = (seat) => {
-    const baseClass = 'seat w-8 h-8 m-1 flex items-center justify-center text-xs font-bold';
+    const baseClass = 'seat relative w-10 h-10 m-1 flex items-center justify-center text-xs font-bold rounded-lg transition-all duration-300 transform cursor-pointer overflow-hidden';
     
     if (selectedSeats.some(s => s.id === seat.id)) {
-      return `${baseClass} selected`;
+      return `${baseClass} selected bg-gradient-to-br from-yellow-400 to-orange-500 text-black shadow-lg scale-110 animate-pulse ring-2 ring-yellow-300`;
     }
     
     if (!seat.isAvailable) {
-      return `${baseClass} ${seat.isOccupied ? 'occupied' : 'reserved'}`;
+      if (seat.isOccupied) {
+        return `${baseClass} occupied bg-gradient-to-br from-red-500 to-red-600 text-white cursor-not-allowed opacity-60`;
+      } else {
+        return `${baseClass} reserved bg-gradient-to-br from-purple-500 to-purple-600 text-white cursor-not-allowed opacity-60`;
+      }
     }
     
-    return `${baseClass} available`;
+    // Different seat types with enhanced styling
+    const seatTypeClass = getSeatTypeClass(seat.seatType);
+    return `${baseClass} available ${seatTypeClass} hover:scale-110 hover:shadow-xl hover:z-10 group`;
+  };
+
+  const getSeatTypeClass = (seatType) => {
+    switch (seatType) {
+      case 'VIP':
+        return 'bg-gradient-to-br from-purple-600 to-indigo-700 text-white border-2 border-purple-400';
+      case 'Premium':
+        return 'bg-gradient-to-br from-blue-500 to-blue-600 text-white border-2 border-blue-300';
+      case 'Regular':
+      default:
+        return 'bg-gradient-to-br from-green-500 to-green-600 text-white border-2 border-green-300';
+    }
+  };
+
+  const getSeatIcon = (seatType) => {
+    switch (seatType) {
+      case 'VIP':
+        return <Crown className="w-3 h-3" />;
+      case 'Premium':
+        return <Star className="w-3 h-3" />;
+      case 'Regular':
+      default:
+        return <Armchair className="w-3 h-3" />;
+    }
   };
 
   const calculateTotal = () => {
@@ -277,3 +307,4 @@ function SeatSelection({ bookingData, updateBookingData, nextStep, prevStep }) {
 }
 
 export default SeatSelection;
+
