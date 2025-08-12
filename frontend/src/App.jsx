@@ -17,8 +17,31 @@ function App() {
     booking: null
   });
   
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [particles, setParticles] = useState([]);
+  
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Generate floating particles for enhanced background
+  useEffect(() => {
+    const generateParticles = () => {
+      const newParticles = [];
+      for (let i = 0; i < 15; i++) {
+        newParticles.push({
+          id: i,
+          x: Math.random() * 100,
+          y: Math.random() * 100,
+          size: Math.random() * 4 + 2,
+          opacity: Math.random() * 0.3 + 0.1,
+          duration: Math.random() * 20 + 10,
+          delay: Math.random() * 5,
+        });
+      }
+      setParticles(newParticles);
+    };
+    generateParticles();
+  }, []);
 
   const steps = [
     { id: 1, name: 'Select Movie', path: '/movies', icon: '🎬' },
@@ -227,4 +250,5 @@ function App() {
 }
 
 export default App;
+
 
