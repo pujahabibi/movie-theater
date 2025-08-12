@@ -270,23 +270,77 @@ function SeatSelection({ bookingData, updateBookingData, nextStep, prevStep }) {
               <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none -z-10"></div>
             </div>
 
-            {/* Legend */}
-            <div className="mt-8 flex justify-center space-x-6 text-sm">
-              <div className="flex items-center text-white">
-                <div className="w-4 h-4 bg-green-500 rounded mr-2"></div>
-                Available
+            {/* Enhanced Seat Type Legends with Color-Coded Indicators */}
+            <div className="mt-12 space-y-6">
+              {/* Seat Types Legend */}
+              <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
+                <h4 className="text-white font-semibold text-lg mb-4 text-center flex items-center justify-center">
+                  <Armchair className="w-5 h-5 mr-2" />
+                  Seat Types & Pricing
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="flex items-center justify-center p-3 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-300">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center border-2 border-green-300">
+                        <Armchair className="w-4 h-4 text-white" />
+                      </div>
+                      <div className="text-left">
+                        <div className="text-white font-medium text-sm">Regular</div>
+                        <div className="text-green-300 text-xs">${showtime?.movie?.price || '12.00'}</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-center p-3 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-300">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center border-2 border-blue-300">
+                        <Star className="w-4 h-4 text-white" />
+                      </div>
+                      <div className="text-left">
+                        <div className="text-white font-medium text-sm">Premium</div>
+                        <div className="text-blue-300 text-xs">${(parseFloat(showtime?.movie?.price || 12) * 1.5).toFixed(2)}</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-center p-3 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-300">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-indigo-700 rounded-lg flex items-center justify-center border-2 border-purple-400">
+                        <Crown className="w-4 h-4 text-white" />
+                      </div>
+                      <div className="text-left">
+                        <div className="text-white font-medium text-sm">VIP</div>
+                        <div className="text-purple-300 text-xs">${(parseFloat(showtime?.movie?.price || 12) * 2).toFixed(2)}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="flex items-center text-white">
-                <div className="w-4 h-4 bg-yellow-500 rounded mr-2"></div>
-                Selected
-              </div>
-              <div className="flex items-center text-white">
-                <div className="w-4 h-4 bg-red-500 rounded mr-2"></div>
-                Occupied
-              </div>
-              <div className="flex items-center text-white">
-                <div className="w-4 h-4 bg-purple-500 rounded mr-2"></div>
-                Reserved
+
+              {/* Seat Status Legend */}
+              <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
+                <h4 className="text-white font-semibold text-lg mb-4 text-center">Seat Status</h4>
+                <div className="flex flex-wrap justify-center gap-6">
+                  <div className="flex items-center space-x-3 group">
+                    <div className="w-6 h-6 bg-gradient-to-br from-green-500 to-green-600 rounded-lg border-2 border-green-300 group-hover:scale-110 transition-transform duration-300"></div>
+                    <span className="text-white text-sm font-medium">Available</span>
+                  </div>
+                  
+                  <div className="flex items-center space-x-3 group">
+                    <div className="w-6 h-6 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-lg border-2 border-yellow-300 group-hover:scale-110 transition-transform duration-300 animate-pulse"></div>
+                    <span className="text-white text-sm font-medium">Selected</span>
+                  </div>
+                  
+                  <div className="flex items-center space-x-3 group">
+                    <div className="w-6 h-6 bg-gradient-to-br from-red-500 to-red-600 rounded-lg opacity-60 group-hover:scale-110 transition-transform duration-300"></div>
+                    <span className="text-white text-sm font-medium">Occupied</span>
+                  </div>
+                  
+                  <div className="flex items-center space-x-3 group">
+                    <div className="w-6 h-6 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg opacity-60 group-hover:scale-110 transition-transform duration-300"></div>
+                    <span className="text-white text-sm font-medium">Reserved</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -377,6 +431,7 @@ function SeatSelection({ bookingData, updateBookingData, nextStep, prevStep }) {
 }
 
 export default SeatSelection;
+
 
 
 
