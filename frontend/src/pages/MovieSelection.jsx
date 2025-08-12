@@ -10,6 +10,8 @@ function MovieSelection({ bookingData, updateBookingData, nextStep }) {
   const [loading, setLoading] = useState(true);
   const [loadingShowtimes, setLoadingShowtimes] = useState(false);
   const [error, setError] = useState(null);
+  const [showTrailerModal, setShowTrailerModal] = useState(false);
+  const [selectedTrailerMovie, setSelectedTrailerMovie] = useState(null);
 
   useEffect(() => {
     fetchMovies();
@@ -73,6 +75,61 @@ function MovieSelection({ bookingData, updateBookingData, nextStep }) {
     }
   };
 
+  const handleTrailerClick = (movie, e) => {
+    e.stopPropagation();
+    setSelectedTrailerMovie(movie);
+    setShowTrailerModal(true);
+  };
+
+  const closeTrailerModal = () => {
+    setShowTrailerModal(false);
+    setSelectedTrailerMovie(null);
+  };
+
+  // Rating Stars Component with animated fill effects
+  const RatingStars = ({ rating, maxRating = 5 }) => {
+    const stars = [];
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 !== 0;
+    
+    for (let i = 0; i < maxRating; i++) {
+      const isFilled = i < fullStars;
+      const isHalf = i === fullStars && hasHalfStar;
+      
+      stars.push(
+        <div key={i} className="relative inline-block">
+          <Star 
+            className={`w-4 h-4 transition-all duration-300 ${
+              isFilled ? 'text-yellow-400 fill-current' : 'text-gray-300'
+            }`}
+          />
+          {isHalf && (
+            <div className="absolute inset-0 overflow-hidden w-1/2">
+              <Star className="w-4 h-4 text-yellow-400 fill-current" />
+            </div>
+          )}
+        </div>
+      );
+    }
+    
+    return (
+      <div className="flex items-center space-x-1 group">
+        {stars.map((star, index) => (
+          <div 
+            key={index} 
+            className="transform transition-transform duration-200 group-hover:scale-110"
+            style={{ animationDelay: `${index * 50}ms` }}
+          >
+            {star}
+          </div>
+        ))}
+        <span className="ml-2 text-sm text-gray-600 font-medium">
+          {rating.toFixed(1)}
+        </span>
+      </div>
+    );
+  };
+
   const formatTime = (dateString) => {
     return new Date(dateString).toLocaleTimeString('en-US', {
       hour: 'numeric',
@@ -112,11 +169,38 @@ function MovieSelection({ bookingData, updateBookingData, nextStep }) {
     return colors[rating] || 'bg-blue-500';
   };
 
+  // Skeleton Loading Component
+  const MovieSkeleton = () => (
+    <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 animate-pulse">
+      <div className="aspect-[2/3] bg-white/10 rounded-xl mb-4"></div>
+      <div className="space-y-3">
+        <div className="h-6 bg-white/10 rounded-lg w-3/4"></div>
+        <div className="h-4 bg-white/10 rounded w-1/2"></div>
+        <div className="flex space-x-2">
+          <div className="h-6 bg-white/10 rounded-full w-16"></div>
+          <div className="h-6 bg-white/10 rounded-full w-12"></div>
+        </div>
+        <div className="h-4 bg-white/10 rounded w-full"></div>
+        <div className="h-4 bg-white/10 rounded w-2/3"></div>
+      </div>
+    </div>
+  );
+
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center h-64">
-        <div className="spinner mb-4"></div>
-        <p className="text-white text-lg">Loading amazing movies...</p>
+      <div className="fade-in">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-bold text-white mb-4 bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+            🎬 Choose Your Movie Experience
+          </h2>
+          <p className="text-blue-200 text-lg">Loading our premium collection of blockbuster movies...</p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+          {[...Array(6)].map((_, index) => (
+            <MovieSkeleton key={index} />
+          ))}
+        </div>
       </div>
     );
   }
@@ -148,60 +232,103 @@ function MovieSelection({ bookingData, updateBookingData, nextStep }) {
         <p className="text-blue-200 text-lg">Select from our premium collection of blockbuster movies</p>
       </div>
 
-      {/* Movies Grid - Enhanced Design */}
+      {/* Movies Grid - Enhanced Design with 3D Effects */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
         {movies.map((movie) => (
           <div
             key={movie.id}
             onClick={() => handleMovieSelect(movie)}
             className={`
-              movie-card bg-white rounded-2xl overflow-hidden shadow-2xl transform transition-all duration-300 hover:scale-105 cursor-pointer
-              ${selectedMovie?.id === movie.id ? 'ring-4 ring-yellow-400 scale-105 shadow-yellow-400/25' : 'hover:shadow-blue-500/25'}
+              group relative bg-white/5 backdrop-blur-sm rounded-3xl overflow-hidden shadow-2xl 
+              transform transition-all duration-500 cursor-pointer perspective-1000
+              hover:scale-105 hover:rotate-y-5 hover:shadow-3xl
+              ${selectedMovie?.id === movie.id 
+                ? 'ring-4 ring-yellow-400 scale-105 shadow-yellow-400/50 animate-pulse-glow' 
+                : 'hover:shadow-purple-500/30'
+              }
             `}
+            style={{
+              transformStyle: 'preserve-3d',
+            }}
           >
-            {/* Movie Poster */}
-            <div className="relative aspect-w-2 aspect-h-3 overflow-hidden">
+            {/* Enhanced Movie Poster with 3D Transform and Glow */}
+            <div className="relative aspect-[2/3] overflow-hidden rounded-t-3xl">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10"></div>
+              
               <img
                 src={movie.posterUrl || `https://via.placeholder.com/400x600/667eea/FFFFFF?text=${encodeURIComponent(movie.title)}`}
                 alt={movie.title}
-                className="w-full h-80 object-cover transition-transform duration-300 hover:scale-110"
+                className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:brightness-110"
               />
-              {/* Rating Badge */}
-              <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-white text-sm font-bold ${getRatingColor(movie.rating)}`}>
+              
+              {/* Glow effect overlay */}
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 via-transparent to-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              
+              {/* Rating Badge with enhanced styling */}
+              <div className={`absolute top-4 right-4 px-3 py-2 rounded-full text-white text-sm font-bold backdrop-blur-sm border border-white/20 z-20 ${getRatingColor(movie.rating)}`}>
                 {movie.rating}
               </div>
-              {/* Price Badge */}
-              <div className="absolute bottom-4 left-4 bg-black/70 backdrop-blur-sm px-3 py-2 rounded-lg">
+              
+              {/* Price Badge with glassmorphism */}
+              <div className="absolute bottom-4 left-4 bg-black/50 backdrop-blur-md px-4 py-2 rounded-xl border border-white/10 z-20">
                 <span className="text-yellow-400 font-bold text-lg">${movie.price}</span>
               </div>
+              
+              {/* Trailer Button */}
+              <button
+                onClick={(e) => handleTrailerClick(movie, e)}
+                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
+                         bg-white/20 backdrop-blur-md rounded-full p-4 text-white opacity-0 
+                         group-hover:opacity-100 transition-all duration-300 hover:scale-110 
+                         hover:bg-white/30 z-20"
+              >
+                <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+                </svg>
+              </button>
+              
+              {/* Shimmer effect on hover */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out"></div>
             </div>
             
-            {/* Movie Details */}
-            <div className="p-6">
-              <h3 className="text-2xl font-bold text-gray-900 mb-3 line-clamp-1">{movie.title}</h3>
-              <p className="text-gray-600 text-sm mb-4 line-clamp-3 leading-relaxed">{movie.description}</p>
+            {/* Enhanced Movie Details */}
+            <div className="p-6 bg-white/5 backdrop-blur-sm">
+              <h3 className="text-2xl font-bold text-white mb-3 line-clamp-1 group-hover:text-yellow-300 transition-colors duration-300">
+                {movie.title}
+              </h3>
+              <p className="text-white/70 text-sm mb-4 line-clamp-3 leading-relaxed">
+                {movie.description}
+              </p>
               
-              {/* Movie Info */}
+              {/* Enhanced Movie Info with Rating Stars */}
               <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center space-x-4 text-sm text-gray-500">
+                <div className="flex items-center space-x-4 text-sm text-white/60">
                   <span className="flex items-center">
                     <Clock className="w-4 h-4 mr-1" />
                     {movie.duration} min
                   </span>
                   <span className="flex items-center">
-                    <Star className="w-4 h-4 mr-1 text-yellow-500" />
-                    {movie.rating}
+                    <Film className="w-4 h-4 mr-1" />
+                    {movie.genre}
                   </span>
                 </div>
               </div>
               
-              {/* Genre Tag */}
+              {/* Rating Stars with Animation */}
+              <div className="mb-4">
+                <RatingStars rating={parseFloat(movie.imdbRating) || 4.5} />
+              </div>
+              
+              {/* Enhanced Genre Tag and Selection Status */}
               <div className="flex justify-between items-center">
-                <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${getGenreColor(movie.genre)}`}>
+                <span className="inline-block px-4 py-2 rounded-full text-xs font-semibold bg-gradient-to-r from-purple-500/20 to-blue-500/20 text-white border border-white/20 backdrop-blur-sm">
                   {movie.genre}
                 </span>
                 {selectedMovie?.id === movie.id && (
-                  <span className="text-green-500 font-semibold text-sm">✓ Selected</span>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                    <span className="text-green-300 font-semibold text-sm">Selected</span>
+                  </div>
                 )}
               </div>
             </div>
@@ -221,50 +348,118 @@ function MovieSelection({ bookingData, updateBookingData, nextStep }) {
           
           {loadingShowtimes ? (
             <div className="flex flex-col items-center justify-center h-32">
-              <div className="spinner mb-4"></div>
-              <p className="text-white">Loading showtimes...</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[...Array(3)].map((_, index) => (
+                  <div key={index} className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 animate-pulse">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="h-8 bg-white/10 rounded-lg w-20"></div>
+                      <div className="h-4 bg-white/10 rounded w-24"></div>
+                    </div>
+                    <div className="h-4 bg-white/10 rounded w-32 mb-2"></div>
+                    <div className="h-4 bg-white/10 rounded w-20"></div>
+                  </div>
+                ))}
+              </div>
             </div>
           ) : showtimes.length === 0 ? (
-            <div className="text-center py-8">
-              <Calendar className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-              <p className="text-gray-300 text-lg">No showtimes available for this movie</p>
+            <div className="text-center py-12">
+              <div className="bg-white/5 backdrop-blur-sm rounded-3xl p-8 border border-white/10">
+                <Calendar className="w-20 h-20 mx-auto mb-6 text-white/40" />
+                <p className="text-white/70 text-xl mb-2">No showtimes available</p>
+                <p className="text-white/50 text-sm">Please check back later or select a different movie</p>
+              </div>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {showtimes.map((showtime) => (
+              {showtimes.map((showtime, index) => (
                 <div
                   key={showtime.id}
                   onClick={() => handleShowtimeSelect(showtime)}
                   className={`
-                    p-6 rounded-xl cursor-pointer transition-all duration-300 transform hover:scale-105
+                    group relative overflow-hidden cursor-pointer transition-all duration-500 transform
+                    bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10
+                    hover:scale-105 hover:shadow-2xl hover:border-white/30
                     ${selectedShowtime?.id === showtime.id
-                      ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-black shadow-2xl scale-105'
-                      : 'bg-white/20 text-white hover:bg-white/30 border border-white/30'
+                      ? 'ring-4 ring-yellow-400 scale-105 shadow-yellow-400/50 bg-gradient-to-br from-yellow-400/20 to-orange-500/20'
+                      : 'hover:bg-white/10'
                     }
                   `}
+                  style={{ animationDelay: `${index * 100}ms` }}
                 >
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="font-bold text-2xl">{formatTime(showtime.startTime)}</span>
-                    <span className="flex items-center text-sm opacity-75">
-                      <Calendar className="w-4 h-4 mr-1" />
-                      {formatDate(showtime.startTime)}
-                    </span>
+                  {/* Pill-style button design */}
+                  <div className="p-6 relative z-10">
+                    {/* Time and Date Header */}
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex flex-col">
+                        <span className={`font-bold text-3xl transition-colors duration-300 ${
+                          selectedShowtime?.id === showtime.id ? 'text-yellow-300' : 'text-white'
+                        }`}>
+                          {formatTime(showtime.startTime)}
+                        </span>
+                        <span className={`text-sm transition-colors duration-300 ${
+                          selectedShowtime?.id === showtime.id ? 'text-yellow-200/80' : 'text-white/60'
+                        }`}>
+                          {formatDate(showtime.startTime)}
+                        </span>
+                      </div>
+                      
+                      {/* Status indicator */}
+                      <div className={`w-4 h-4 rounded-full transition-all duration-300 ${
+                        selectedShowtime?.id === showtime.id 
+                          ? 'bg-yellow-400 animate-pulse shadow-lg shadow-yellow-400/50' 
+                          : 'bg-white/20 group-hover:bg-white/40'
+                      }`}></div>
+                    </div>
+                    
+                    {/* Theater Info */}
+                    <div className="flex items-center mb-3">
+                      <div className={`p-2 rounded-lg mr-3 transition-colors duration-300 ${
+                        selectedShowtime?.id === showtime.id ? 'bg-yellow-400/20' : 'bg-white/10'
+                      }`}>
+                        <MapPin className={`w-4 h-4 ${
+                          selectedShowtime?.id === showtime.id ? 'text-yellow-300' : 'text-white/70'
+                        }`} />
+                      </div>
+                      <span className={`font-semibold transition-colors duration-300 ${
+                        selectedShowtime?.id === showtime.id ? 'text-white' : 'text-white/80'
+                      }`}>
+                        {showtime.theaterRoom}
+                      </span>
+                    </div>
+                    
+                    {/* Seats Info */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <div className={`p-2 rounded-lg mr-3 transition-colors duration-300 ${
+                          selectedShowtime?.id === showtime.id ? 'bg-yellow-400/20' : 'bg-white/10'
+                        }`}>
+                          <Users className={`w-4 h-4 ${
+                            selectedShowtime?.id === showtime.id ? 'text-yellow-300' : 'text-white/70'
+                          }`} />
+                        </div>
+                        <span className={`text-sm transition-colors duration-300 ${
+                          selectedShowtime?.id === showtime.id ? 'text-white/90' : 'text-white/60'
+                        }`}>
+                          {showtime.totalSeats} seats
+                        </span>
+                      </div>
+                      
+                      {selectedShowtime?.id === showtime.id && (
+                        <div className="flex items-center space-x-2 animate-fade-in">
+                          <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                          <span className="text-green-300 font-semibold text-sm">Selected</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                   
-                  <div className="flex items-center mb-2">
-                    <MapPin className="w-4 h-4 mr-2" />
-                    <span className="font-semibold">{showtime.theaterRoom}</span>
-                  </div>
+                  {/* Hover glow effect */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-transparent to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl"></div>
                   
-                  <div className="flex items-center justify-between">
-                    <span className="flex items-center text-sm opacity-75">
-                      <Users className="w-4 h-4 mr-1" />
-                      {showtime.totalSeats} seats
-                    </span>
-                    {selectedShowtime?.id === showtime.id && (
-                      <span className="font-bold">✓ Selected</span>
-                    )}
-                  </div>
+                  {/* Selection glow effect */}
+                  {selectedShowtime?.id === showtime.id && (
+                    <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/20 via-transparent to-orange-500/20 rounded-2xl animate-pulse"></div>
+                  )}
                 </div>
               ))}
             </div>
@@ -297,8 +492,117 @@ function MovieSelection({ bookingData, updateBookingData, nextStep }) {
           </p>
         )}
       </div>
+
+      {/* Movie Trailer Preview Modal with Backdrop Blur */}
+      {showTrailerModal && selectedTrailerMovie && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Enhanced Backdrop with Blur */}
+          <div 
+            className="absolute inset-0 bg-black/60 backdrop-blur-xl transition-all duration-500"
+            onClick={closeTrailerModal}
+          ></div>
+          
+          {/* Modal Container with Glassmorphism */}
+          <div className="relative z-10 w-full max-w-4xl mx-auto animate-fade-in">
+            <div className="bg-white/10 backdrop-blur-2xl rounded-3xl border border-white/20 shadow-2xl overflow-hidden">
+              {/* Modal Header */}
+              <div className="flex items-center justify-between p-6 border-b border-white/20">
+                <div>
+                  <h3 className="text-2xl font-bold text-white mb-1">
+                    🎬 {selectedTrailerMovie.title}
+                  </h3>
+                  <p className="text-white/70 text-sm">Movie Trailer Preview</p>
+                </div>
+                <button
+                  onClick={closeTrailerModal}
+                  className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-300 hover:scale-110"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              
+              {/* Trailer Content */}
+              <div className="p-6">
+                {/* Placeholder for trailer video */}
+                <div className="aspect-video bg-black/50 rounded-2xl mb-6 flex items-center justify-center relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 via-transparent to-blue-500/20"></div>
+                  <div className="text-center z-10">
+                    <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mb-4 mx-auto hover:scale-110 transition-transform duration-300 cursor-pointer">
+                      <svg className="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <p className="text-white/80 text-lg font-medium">Trailer Preview</p>
+                    <p className="text-white/60 text-sm mt-1">Click to play trailer</p>
+                  </div>
+                  
+                  {/* Animated background elements */}
+                  <div className="absolute top-4 right-4 w-16 h-16 bg-yellow-400/20 rounded-full blur-xl animate-pulse"></div>
+                  <div className="absolute bottom-4 left-4 w-12 h-12 bg-purple-400/20 rounded-full blur-lg animate-pulse animation-delay-2000"></div>
+                </div>
+                
+                {/* Movie Details in Modal */}
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <h4 className="text-lg font-semibold text-white mb-3">Movie Details</h4>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-center text-white/70">
+                        <Clock className="w-4 h-4 mr-2" />
+                        <span>{selectedTrailerMovie.duration} minutes</span>
+                      </div>
+                      <div className="flex items-center text-white/70">
+                        <Film className="w-4 h-4 mr-2" />
+                        <span>{selectedTrailerMovie.genre}</span>
+                      </div>
+                      <div className="flex items-center text-white/70">
+                        <span className="mr-2">⭐</span>
+                        <RatingStars rating={parseFloat(selectedTrailerMovie.imdbRating) || 4.5} />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h4 className="text-lg font-semibold text-white mb-3">Synopsis</h4>
+                    <p className="text-white/70 text-sm leading-relaxed">
+                      {selectedTrailerMovie.description}
+                    </p>
+                  </div>
+                </div>
+                
+                {/* Action Buttons */}
+                <div className="flex items-center justify-center space-x-4 mt-8">
+                  <button
+                    onClick={() => {
+                      handleMovieSelect(selectedTrailerMovie);
+                      closeTrailerModal();
+                    }}
+                    className="px-6 py-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-semibold rounded-xl hover:from-yellow-500 hover:to-orange-600 transition-all duration-300 hover:scale-105 shadow-lg"
+                  >
+                    🎟️ Select This Movie
+                  </button>
+                  <button
+                    onClick={closeTrailerModal}
+                    className="px-6 py-3 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-xl hover:bg-white/20 transition-all duration-300 border border-white/20"
+                  >
+                    Close Preview
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
 export default MovieSelection;
+
+
+
+
+
+
+

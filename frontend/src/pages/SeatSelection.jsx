@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Users, DollarSign } from 'lucide-react';
+import { ArrowLeft, Users, DollarSign, Monitor, Armchair, Crown, Star } from 'lucide-react';
 import api from '../api';
 
 function SeatSelection({ bookingData, updateBookingData, nextStep, prevStep }) {
@@ -35,12 +35,48 @@ function SeatSelection({ bookingData, updateBookingData, nextStep, prevStep }) {
     const isSelected = selectedSeats.some(s => s.id === seat.id);
     let newSelection;
     
+    // Add ripple effect
+    const seatElement = document.querySelector(`[data-seat-id="${seat.id}"]`);
+    if (seatElement) {
+      const ripple = document.createElement('div');
+      ripple.classList.add('ripple-effect');
+      const rect = seatElement.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      ripple.style.width = ripple.style.height = size + 'px';
+      ripple.style.left = '50%';
+      ripple.style.top = '50%';
+      ripple.style.transform = 'translate(-50%, -50%) scale(0)';
+      seatElement.appendChild(ripple);
+      
+      // Remove ripple after animation
+      setTimeout(() => {
+        if (ripple.parentNode) {
+          ripple.parentNode.removeChild(ripple);
+        }
+      }, 600);
+      
+      // Add spring animation
+      seatElement.classList.add('seat-spring-animation');
+      setTimeout(() => {
+        seatElement.classList.remove('seat-spring-animation');
+      }, 500);
+    }
+    
     if (isSelected) {
       newSelection = selectedSeats.filter(s => s.id !== seat.id);
     } else {
       // Limit to 8 seats maximum
       if (selectedSeats.length >= 8) {
-        alert('You can select a maximum of 8 seats.');
+        // Enhanced alert with better UX
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in';
+        alertDiv.textContent = 'Maximum 8 seats allowed per booking';
+        document.body.appendChild(alertDiv);
+        setTimeout(() => {
+          if (alertDiv.parentNode) {
+            alertDiv.parentNode.removeChild(alertDiv);
+          }
+        }, 3000);
         return;
       }
       newSelection = [...selectedSeats, seat];
@@ -76,17 +112,47 @@ function SeatSelection({ bookingData, updateBookingData, nextStep, prevStep }) {
   };
 
   const getSeatClass = (seat) => {
-    const baseClass = 'seat w-8 h-8 m-1 flex items-center justify-center text-xs font-bold';
+    const baseClass = 'seat relative w-10 h-10 m-1 flex items-center justify-center text-xs font-bold rounded-lg transition-all duration-300 transform cursor-pointer overflow-hidden';
     
     if (selectedSeats.some(s => s.id === seat.id)) {
-      return `${baseClass} selected`;
+      return `${baseClass} selected bg-gradient-to-br from-yellow-400 to-orange-500 text-black shadow-lg scale-110 animate-pulse ring-2 ring-yellow-300`;
     }
     
     if (!seat.isAvailable) {
-      return `${baseClass} ${seat.isOccupied ? 'occupied' : 'reserved'}`;
+      if (seat.isOccupied) {
+        return `${baseClass} occupied bg-gradient-to-br from-red-500 to-red-600 text-white cursor-not-allowed opacity-60`;
+      } else {
+        return `${baseClass} reserved bg-gradient-to-br from-purple-500 to-purple-600 text-white cursor-not-allowed opacity-60`;
+      }
     }
     
-    return `${baseClass} available`;
+    // Different seat types with enhanced styling
+    const seatTypeClass = getSeatTypeClass(seat.seatType);
+    return `${baseClass} available ${seatTypeClass} hover:scale-110 hover:shadow-xl hover:z-10 group`;
+  };
+
+  const getSeatTypeClass = (seatType) => {
+    switch (seatType) {
+      case 'VIP':
+        return 'bg-gradient-to-br from-purple-600 to-indigo-700 text-white border-2 border-purple-400';
+      case 'Premium':
+        return 'bg-gradient-to-br from-blue-500 to-blue-600 text-white border-2 border-blue-300';
+      case 'Regular':
+      default:
+        return 'bg-gradient-to-br from-green-500 to-green-600 text-white border-2 border-green-300';
+    }
+  };
+
+  const getSeatIcon = (seatType) => {
+    switch (seatType) {
+      case 'VIP':
+        return <Crown className="w-3 h-3" />;
+      case 'Premium':
+        return <Star className="w-3 h-3" />;
+      case 'Regular':
+      default:
+        return <Armchair className="w-3 h-3" />;
+    }
   };
 
   const calculateTotal = () => {
@@ -133,60 +199,184 @@ function SeatSelection({ bookingData, updateBookingData, nextStep, prevStep }) {
       </div>
 
       <div className="flex flex-col lg:flex-row gap-8">
-        {/* Seating Chart */}
+        {/* Enhanced Seating Chart with Theater Perspective */}
         <div className="flex-1">
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-            {/* Screen */}
-            <div className="text-center mb-8">
-              <div className="bg-gradient-to-r from-gray-300 to-gray-400 text-gray-800 py-2 px-8 rounded-full inline-block font-bold">
-                SCREEN
+          <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10 shadow-2xl relative overflow-hidden">
+            {/* Background theater ambiance */}
+            <div className="absolute inset-0 bg-gradient-to-b from-purple-900/20 via-blue-900/10 to-black/30 rounded-3xl"></div>
+            
+            {/* Enhanced Cinema Screen with Glow Effects */}
+            <div className="text-center mb-12 relative z-10">
+              <div className="relative inline-block">
+                {/* Screen glow effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-400 via-white to-blue-400 rounded-2xl blur-xl opacity-30 scale-110"></div>
+                
+                {/* Main screen */}
+                <div className="relative bg-gradient-to-r from-gray-100 via-white to-gray-100 text-gray-800 py-4 px-16 rounded-2xl font-bold text-lg shadow-2xl border-4 border-gray-300">
+                  <div className="flex items-center justify-center space-x-3">
+                    <Monitor className="w-6 h-6" />
+                    <span>CINEMA SCREEN</span>
+                    <Monitor className="w-6 h-6" />
+                  </div>
+                  
+                  {/* Screen reflection effect */}
+                  <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-transparent to-transparent rounded-2xl"></div>
+                </div>
+                
+                {/* Screen base/stand */}
+                <div className="mt-2 w-32 h-2 bg-gradient-to-r from-gray-400 to-gray-500 rounded-full mx-auto shadow-lg"></div>
+                
+                {/* Ambient lighting effects */}
+                <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 w-64 h-16 bg-gradient-to-b from-blue-400/20 to-transparent rounded-full blur-2xl"></div>
+                <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-48 h-8 bg-gradient-to-t from-white/10 to-transparent rounded-full blur-xl"></div>
               </div>
+              
+              {/* Theater perspective indicator */}
+              <p className="text-white/60 text-sm mt-4 font-medium">Premium Theater Experience</p>
             </div>
 
-            {/* Seats */}
-            <div className="max-w-2xl mx-auto">
-              {rows.map((row) => (
-                <div key={row} className="flex items-center justify-center mb-2">
-                  <div className="w-6 text-white font-bold text-sm flex items-center justify-center">
-                    {row}
+            {/* Enhanced Seats with Theater Perspective and Ripple Effects */}
+            <div className="max-w-4xl mx-auto relative" style={{ perspective: '1000px' }}>
+              {/* Theater perspective container */}
+              <div className="transform-gpu" style={{ transformStyle: 'preserve-3d' }}>
+                {rows.map((row, rowIndex) => (
+                  <div 
+                    key={row} 
+                    className="flex items-center justify-center mb-3 relative"
+                    style={{
+                      transform: `rotateX(${Math.max(0, (rows.length - rowIndex - 1) * 2)}deg) translateZ(${rowIndex * 5}px)`,
+                      transformOrigin: 'center bottom'
+                    }}
+                  >
+                    {/* Row label - left */}
+                    <div className="w-8 text-white/80 font-bold text-sm flex items-center justify-center bg-white/10 backdrop-blur-sm rounded-lg h-10 mr-4 border border-white/20">
+                      {row}
+                    </div>
+                    
+                    {/* Seats row */}
+                    <div className="flex space-x-2 relative">
+                      {seatMap[row].map((seat, seatIndex) => (
+                        <button
+                          key={seat.id}
+                          onClick={() => handleSeatClick(seat)}
+                          disabled={!seat.isAvailable}
+                          className={getSeatClass(seat)}
+                          title={`${row}${seat.seatNumber} - ${seat.seatType} - ${showtime.movie.price}`}
+                          style={{ animationDelay: `${(rowIndex * seatMap[row].length + seatIndex) * 50}ms` }}
+                        >
+                          {/* Seat content with icon and number */}
+                          <div className="flex flex-col items-center justify-center relative z-10">
+                            <div className="text-xs opacity-80 mb-0.5">
+                              {getSeatIcon(seat.seatType)}
+                            </div>
+                            <span className="text-xs font-bold">{seat.seatNumber}</span>
+                          </div>
+                          
+                          {/* Ripple effect on click */}
+                          <div className="absolute inset-0 rounded-lg overflow-hidden">
+                            <div className="ripple-effect"></div>
+                          </div>
+                          
+                          {/* Hover glow effect */}
+                          <div className="absolute inset-0 bg-white/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm scale-110"></div>
+                          
+                          {/* Selection pulse effect */}
+                          {selectedSeats.some(s => s.id === seat.id) && (
+                            <div className="absolute inset-0 bg-yellow-400/30 rounded-lg animate-ping"></div>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                    
+                    {/* Row label - right */}
+                    <div className="w-8 text-white/80 font-bold text-sm flex items-center justify-center bg-white/10 backdrop-blur-sm rounded-lg h-10 ml-4 border border-white/20">
+                      {row}
+                    </div>
+                    
+                    {/* Row shadow for depth */}
+                    <div 
+                      className="absolute inset-0 bg-black/10 rounded-lg blur-sm -z-10"
+                      style={{ transform: 'translateY(4px) translateZ(-10px)' }}
+                    ></div>
                   </div>
-                  <div className="flex mx-4">
-                    {seatMap[row].map((seat) => (
-                      <button
-                        key={seat.id}
-                        onClick={() => handleSeatClick(seat)}
-                        disabled={!seat.isAvailable}
-                        className={getSeatClass(seat)}
-                        title={`${row}${seat.seatNumber} - ${seat.seatType} - $${showtime.movie.price}`}
-                      >
-                        {seat.seatNumber}
-                      </button>
-                    ))}
+                ))}
+              </div>
+              
+              {/* Theater floor gradient */}
+              <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none -z-10"></div>
+            </div>
+
+            {/* Enhanced Seat Type Legends with Color-Coded Indicators */}
+            <div className="mt-12 space-y-6">
+              {/* Seat Types Legend */}
+              <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
+                <h4 className="text-white font-semibold text-lg mb-4 text-center flex items-center justify-center">
+                  <Armchair className="w-5 h-5 mr-2" />
+                  Seat Types & Pricing
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="flex items-center justify-center p-3 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-300">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center border-2 border-green-300">
+                        <Armchair className="w-4 h-4 text-white" />
+                      </div>
+                      <div className="text-left">
+                        <div className="text-white font-medium text-sm">Regular</div>
+                        <div className="text-green-300 text-xs">${showtime?.movie?.price || '12.00'}</div>
+                      </div>
+                    </div>
                   </div>
-                  <div className="w-6 text-white font-bold text-sm flex items-center justify-center">
-                    {row}
+                  
+                  <div className="flex items-center justify-center p-3 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-300">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center border-2 border-blue-300">
+                        <Star className="w-4 h-4 text-white" />
+                      </div>
+                      <div className="text-left">
+                        <div className="text-white font-medium text-sm">Premium</div>
+                        <div className="text-blue-300 text-xs">${(parseFloat(showtime?.movie?.price || 12) * 1.5).toFixed(2)}</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-center p-3 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-300">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-indigo-700 rounded-lg flex items-center justify-center border-2 border-purple-400">
+                        <Crown className="w-4 h-4 text-white" />
+                      </div>
+                      <div className="text-left">
+                        <div className="text-white font-medium text-sm">VIP</div>
+                        <div className="text-purple-300 text-xs">${(parseFloat(showtime?.movie?.price || 12) * 2).toFixed(2)}</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              ))}
-            </div>
+              </div>
 
-            {/* Legend */}
-            <div className="mt-8 flex justify-center space-x-6 text-sm">
-              <div className="flex items-center text-white">
-                <div className="w-4 h-4 bg-green-500 rounded mr-2"></div>
-                Available
-              </div>
-              <div className="flex items-center text-white">
-                <div className="w-4 h-4 bg-yellow-500 rounded mr-2"></div>
-                Selected
-              </div>
-              <div className="flex items-center text-white">
-                <div className="w-4 h-4 bg-red-500 rounded mr-2"></div>
-                Occupied
-              </div>
-              <div className="flex items-center text-white">
-                <div className="w-4 h-4 bg-purple-500 rounded mr-2"></div>
-                Reserved
+              {/* Seat Status Legend */}
+              <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
+                <h4 className="text-white font-semibold text-lg mb-4 text-center">Seat Status</h4>
+                <div className="flex flex-wrap justify-center gap-6">
+                  <div className="flex items-center space-x-3 group">
+                    <div className="w-6 h-6 bg-gradient-to-br from-green-500 to-green-600 rounded-lg border-2 border-green-300 group-hover:scale-110 transition-transform duration-300"></div>
+                    <span className="text-white text-sm font-medium">Available</span>
+                  </div>
+                  
+                  <div className="flex items-center space-x-3 group">
+                    <div className="w-6 h-6 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-lg border-2 border-yellow-300 group-hover:scale-110 transition-transform duration-300 animate-pulse"></div>
+                    <span className="text-white text-sm font-medium">Selected</span>
+                  </div>
+                  
+                  <div className="flex items-center space-x-3 group">
+                    <div className="w-6 h-6 bg-gradient-to-br from-red-500 to-red-600 rounded-lg opacity-60 group-hover:scale-110 transition-transform duration-300"></div>
+                    <span className="text-white text-sm font-medium">Occupied</span>
+                  </div>
+                  
+                  <div className="flex items-center space-x-3 group">
+                    <div className="w-6 h-6 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg opacity-60 group-hover:scale-110 transition-transform duration-300"></div>
+                    <span className="text-white text-sm font-medium">Reserved</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -277,3 +467,8 @@ function SeatSelection({ bookingData, updateBookingData, nextStep, prevStep }) {
 }
 
 export default SeatSelection;
+
+
+
+
+
