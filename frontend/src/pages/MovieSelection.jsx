@@ -348,50 +348,118 @@ function MovieSelection({ bookingData, updateBookingData, nextStep }) {
           
           {loadingShowtimes ? (
             <div className="flex flex-col items-center justify-center h-32">
-              <div className="spinner mb-4"></div>
-              <p className="text-white">Loading showtimes...</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[...Array(3)].map((_, index) => (
+                  <div key={index} className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 animate-pulse">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="h-8 bg-white/10 rounded-lg w-20"></div>
+                      <div className="h-4 bg-white/10 rounded w-24"></div>
+                    </div>
+                    <div className="h-4 bg-white/10 rounded w-32 mb-2"></div>
+                    <div className="h-4 bg-white/10 rounded w-20"></div>
+                  </div>
+                ))}
+              </div>
             </div>
           ) : showtimes.length === 0 ? (
-            <div className="text-center py-8">
-              <Calendar className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-              <p className="text-gray-300 text-lg">No showtimes available for this movie</p>
+            <div className="text-center py-12">
+              <div className="bg-white/5 backdrop-blur-sm rounded-3xl p-8 border border-white/10">
+                <Calendar className="w-20 h-20 mx-auto mb-6 text-white/40" />
+                <p className="text-white/70 text-xl mb-2">No showtimes available</p>
+                <p className="text-white/50 text-sm">Please check back later or select a different movie</p>
+              </div>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {showtimes.map((showtime) => (
+              {showtimes.map((showtime, index) => (
                 <div
                   key={showtime.id}
                   onClick={() => handleShowtimeSelect(showtime)}
                   className={`
-                    p-6 rounded-xl cursor-pointer transition-all duration-300 transform hover:scale-105
+                    group relative overflow-hidden cursor-pointer transition-all duration-500 transform
+                    bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10
+                    hover:scale-105 hover:shadow-2xl hover:border-white/30
                     ${selectedShowtime?.id === showtime.id
-                      ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-black shadow-2xl scale-105'
-                      : 'bg-white/20 text-white hover:bg-white/30 border border-white/30'
+                      ? 'ring-4 ring-yellow-400 scale-105 shadow-yellow-400/50 bg-gradient-to-br from-yellow-400/20 to-orange-500/20'
+                      : 'hover:bg-white/10'
                     }
                   `}
+                  style={{ animationDelay: `${index * 100}ms` }}
                 >
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="font-bold text-2xl">{formatTime(showtime.startTime)}</span>
-                    <span className="flex items-center text-sm opacity-75">
-                      <Calendar className="w-4 h-4 mr-1" />
-                      {formatDate(showtime.startTime)}
-                    </span>
+                  {/* Pill-style button design */}
+                  <div className="p-6 relative z-10">
+                    {/* Time and Date Header */}
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex flex-col">
+                        <span className={`font-bold text-3xl transition-colors duration-300 ${
+                          selectedShowtime?.id === showtime.id ? 'text-yellow-300' : 'text-white'
+                        }`}>
+                          {formatTime(showtime.startTime)}
+                        </span>
+                        <span className={`text-sm transition-colors duration-300 ${
+                          selectedShowtime?.id === showtime.id ? 'text-yellow-200/80' : 'text-white/60'
+                        }`}>
+                          {formatDate(showtime.startTime)}
+                        </span>
+                      </div>
+                      
+                      {/* Status indicator */}
+                      <div className={`w-4 h-4 rounded-full transition-all duration-300 ${
+                        selectedShowtime?.id === showtime.id 
+                          ? 'bg-yellow-400 animate-pulse shadow-lg shadow-yellow-400/50' 
+                          : 'bg-white/20 group-hover:bg-white/40'
+                      }`}></div>
+                    </div>
+                    
+                    {/* Theater Info */}
+                    <div className="flex items-center mb-3">
+                      <div className={`p-2 rounded-lg mr-3 transition-colors duration-300 ${
+                        selectedShowtime?.id === showtime.id ? 'bg-yellow-400/20' : 'bg-white/10'
+                      }`}>
+                        <MapPin className={`w-4 h-4 ${
+                          selectedShowtime?.id === showtime.id ? 'text-yellow-300' : 'text-white/70'
+                        }`} />
+                      </div>
+                      <span className={`font-semibold transition-colors duration-300 ${
+                        selectedShowtime?.id === showtime.id ? 'text-white' : 'text-white/80'
+                      }`}>
+                        {showtime.theaterRoom}
+                      </span>
+                    </div>
+                    
+                    {/* Seats Info */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <div className={`p-2 rounded-lg mr-3 transition-colors duration-300 ${
+                          selectedShowtime?.id === showtime.id ? 'bg-yellow-400/20' : 'bg-white/10'
+                        }`}>
+                          <Users className={`w-4 h-4 ${
+                            selectedShowtime?.id === showtime.id ? 'text-yellow-300' : 'text-white/70'
+                          }`} />
+                        </div>
+                        <span className={`text-sm transition-colors duration-300 ${
+                          selectedShowtime?.id === showtime.id ? 'text-white/90' : 'text-white/60'
+                        }`}>
+                          {showtime.totalSeats} seats
+                        </span>
+                      </div>
+                      
+                      {selectedShowtime?.id === showtime.id && (
+                        <div className="flex items-center space-x-2 animate-fade-in">
+                          <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                          <span className="text-green-300 font-semibold text-sm">Selected</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                   
-                  <div className="flex items-center mb-2">
-                    <MapPin className="w-4 h-4 mr-2" />
-                    <span className="font-semibold">{showtime.theaterRoom}</span>
-                  </div>
+                  {/* Hover glow effect */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-transparent to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl"></div>
                   
-                  <div className="flex items-center justify-between">
-                    <span className="flex items-center text-sm opacity-75">
-                      <Users className="w-4 h-4 mr-1" />
-                      {showtime.totalSeats} seats
-                    </span>
-                    {selectedShowtime?.id === showtime.id && (
-                      <span className="font-bold">✓ Selected</span>
-                    )}
-                  </div>
+                  {/* Selection glow effect */}
+                  {selectedShowtime?.id === showtime.id && (
+                    <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/20 via-transparent to-orange-500/20 rounded-2xl animate-pulse"></div>
+                  )}
                 </div>
               ))}
             </div>
@@ -429,6 +497,7 @@ function MovieSelection({ bookingData, updateBookingData, nextStep }) {
 }
 
 export default MovieSelection;
+
 
 
 
