@@ -1,0 +1,114 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Movie {
+  id          String      @id @default(cuid())
+  title       String      @db.VarChar(255)
+  description String      @db.Text
+  duration    Int         // minutes
+  genre       String      @db.VarChar(100)
+  posterUrl   String?     @map("poster_url") @db.VarChar(500)
+  rating      String      @default("PG") @db.VarChar(10)
+  price       Decimal     @db.Decimal(10, 2)
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+  
+  showtimes   Showtime[]
+  
+  @@map("movies")
+}
+
+model Showtime {
+  id         String   @id @default(cuid())
+  movieId    String   @map("movie_id")
+  startTime  DateTime @map("start_time")
+  theaterRoom String  @map("theater_room") @db.VarChar(50)
+  totalSeats Int      @default(100) @map("total_seats")
+  createdAt  DateTime @default(now()) @map("created_at")
+  
+  movie      Movie    @relation(fields: [movieId], references: [id], onDelete: Cascade)
+  seats      Seat[]
+  bookings   Booking[]
+  
+  @@map("showtimes")
+}
+
+model Seat {
+  id          String    @id @default(cuid())
+  showtimeId  String    @map("showtime_id")
+  seatRow     String    @map("seat_row") @db.VarChar(5)
+  seatNumber  Int       @map("seat_number")
+  seatType    String    @default("regular") @map("seat_type") @db.VarChar(20)
+  isOccupied  Boolean   @default(false) @map("is_occupied")
+  reservedAt  DateTime? @map("reserved_at")
+  reservedBy  String?   @map("reserved_by") @db.VarChar(100)
+  
+  showtime    Showtime     @relation(fields: [showtimeId], references: [id], onDelete: Cascade)
+  bookingSeats BookingSeat[]
+  
+  @@unique([showtimeId, seatRow, seatNumber])
+  @@map("seats")
+}
+
+model Snack {
+  id          String        @id @default(cuid())
+  name        String        @unique @db.VarChar(255)
+  description String?       @db.Text
+  price       Decimal       @db.Decimal(10, 2)
+  category    String        @db.VarChar(50)
+  imageUrl    String?       @map("image_url") @db.VarChar(500)
+  available   Boolean       @default(true)
+  createdAt   DateTime      @default(now()) @map("created_at")
+  
+  bookingSnacks BookingSnack[]
+  
+  @@map("snacks")
+}
+
+model Booking {
+  id            String   @id @default(cuid())
+  showtimeId    String   @map("showtime_id")
+  customerName  String   @map("customer_name") @db.VarChar(255)
+  customerEmail String   @map("customer_email") @db.VarChar(255)
+  customerPhone String?  @map("customer_phone") @db.VarChar(20)
+  totalAmount   Decimal  @map("total_amount") @db.Decimal(10, 2)
+  status        String   @default("confirmed") @db.VarChar(20)
+  bookingDate   DateTime @default(now()) @map("booking_date")
+  
+  showtime      Showtime      @relation(fields: [showtimeId], references: [id])
+  bookingSeats  BookingSeat[]
+  bookingSnacks BookingSnack[]
+  
+  @@map("bookings")
+}
+
+model BookingSeat {
+  id        String @id @default(cuid())
+  bookingId String @map("booking_id")
+  seatId    String @map("seat_id")
+  
+  booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  seat      Seat    @relation(fields: [seatId], references: [id], onDelete: Cascade)
+  
+  @@unique([bookingId, seatId])
+  @@map("booking_seats")
+}
+
+model BookingSnack {
+  id        String @id @default(cuid())
+  bookingId String @map("booking_id")
+  snackId   String @map("snack_id")
+  quantity  Int    @default(1)
+  
+  booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  snack     Snack   @relation(fields: [snackId], references: [id], onDelete: Cascade)
+  
+  @@unique([bookingId, snackId])
+  @@map("booking_snacks")
+}
