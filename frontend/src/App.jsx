@@ -91,13 +91,73 @@ function App() {
   const currentStep = getCurrentStep();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 relative overflow-hidden">
-      {/* Animated Background Elements */}
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Enhanced Dynamic Background with Pattern Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
+        <div className="absolute inset-0 bg-gradient-to-tr from-pink-900/20 via-transparent to-cyan-900/20"></div>
+        <div className="absolute inset-0 opacity-30" style={{
+          backgroundImage: `radial-gradient(circle at 25% 25%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                           radial-gradient(circle at 75% 75%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                           radial-gradient(circle at 50% 50%, rgba(119, 198, 255, 0.2) 0%, transparent 50%)`
+        }}></div>
+      </div>
+
+      {/* Enhanced Animated Background Elements with Particle Effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Main floating orbs */}
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-pulse animation-delay-4000"></div>
+        
+        {/* Additional floating elements */}
+        <div className="absolute top-20 left-20 w-32 h-32 bg-yellow-400 rounded-full mix-blend-multiply filter blur-lg opacity-15 animate-float"></div>
+        <div className="absolute bottom-20 right-20 w-24 h-24 bg-pink-400 rounded-full mix-blend-multiply filter blur-lg opacity-15 animate-float animation-delay-3000"></div>
+        
+        {/* Floating particles */}
+        {particles.map((particle) => (
+          <div
+            key={particle.id}
+            className="absolute rounded-full bg-white mix-blend-overlay animate-float"
+            style={{
+              left: `${particle.x}%`,
+              top: `${particle.y}%`,
+              width: `${particle.size}px`,
+              height: `${particle.size}px`,
+              opacity: particle.opacity,
+              animationDuration: `${particle.duration}s`,
+              animationDelay: `${particle.delay}s`,
+            }}
+          />
+        ))}
       </div>
+
+      {/* Floating Navigation Bar */}
+      <nav className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
+        <div className="bg-white/10 backdrop-blur-lg rounded-full px-6 py-3 border border-white/20 shadow-2xl">
+          <div className="flex items-center space-x-6 text-white/80">
+            <button 
+              onClick={resetBooking}
+              className="hover:text-white transition-colors duration-300 text-sm font-medium"
+            >
+              🏠 Home
+            </button>
+            <div className="w-px h-4 bg-white/30"></div>
+            <span className="text-xs text-white/60">Step {currentStep} of {steps.length}</span>
+            <div className="w-px h-4 bg-white/30"></div>
+            <div className="flex space-x-1">
+              {steps.map((_, index) => (
+                <div
+                  key={index}
+                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                    index < currentStep ? 'bg-green-400' : 
+                    index === currentStep - 1 ? 'bg-yellow-400 animate-pulse' : 'bg-white/30'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </nav>
 
       <div className="container mx-auto px-4 py-8 relative z-10">
         {/* Enhanced Header */}
@@ -258,6 +318,7 @@ function App() {
 }
 
 export default App;
+
 
 
 
