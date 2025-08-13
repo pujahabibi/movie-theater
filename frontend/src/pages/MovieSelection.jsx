@@ -25,11 +25,7 @@ function MovieSelection({ bookingData, updateBookingData, nextStep }) {
     try {
       setError(null);
       const response = await api.get('/movies');
-      // API returns {success: true, data: [...]} and interceptor extracts the response
-      const moviesData = response.data || response || [];
-      console.log('Movies response:', response);
-      console.log('Movies data:', moviesData);
-      setMovies(Array.isArray(moviesData) ? moviesData : []);
+      setMovies(response.data || []);
     } catch (error) {
       console.error('Error fetching movies:', error);
       setError('Failed to load movies. Please try again.');
@@ -43,11 +39,7 @@ function MovieSelection({ bookingData, updateBookingData, nextStep }) {
     setLoadingShowtimes(true);
     try {
       const response = await api.get(`/showtimes/movie/${movieId}`);
-      // API returns {success: true, data: [...]} and interceptor extracts the response
-      const showtimesData = response.data || response || [];
-      console.log('Showtimes response:', response);
-      console.log('Showtimes data:', showtimesData);
-      setShowtimes(Array.isArray(showtimesData) ? showtimesData : []);
+      setShowtimes(response.data || []);
     } catch (error) {
       console.error('Error fetching showtimes:', error);
       setShowtimes([]);
@@ -302,3 +294,4 @@ function MovieSelection({ bookingData, updateBookingData, nextStep }) {
 }
 
 export default MovieSelection;
+
