@@ -17,15 +17,9 @@ function SnackSelection({ bookingData, updateBookingData, nextStep, prevStep }) 
   const fetchSnacks = async () => {
     try {
       const response = await api.get('/snacks');
-      // Handle both direct array and {success, data} format
-      if (response.data && Array.isArray(response.data)) {
-        setSnacks(response.data);
-      } else if (response.data && response.data.snacks) {
-        setSnacks(response.data.snacks);
-        setCategories(response.data.categories || {});
-      } else {
-        setSnacks([]);
-      }
+      const snacksData = response.data?.snacks || response.data || [];
+      setSnacks(Array.isArray(snacksData) ? snacksData : []);
+      setCategories(response.data?.categories || {});
     } catch (error) {
       console.error('Error fetching snacks:', error);
     } finally {
