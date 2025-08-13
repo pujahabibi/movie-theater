@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { CheckCircle, Calendar, MapPin, Users, Mail, Phone, Download, RotateCcw } from 'lucide-react';
 import { useNotification } from '../providers/NotificationProvider';
+import api from '../api';
 
 function BookingConfirmation({ bookingData, resetBooking }) {
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
   const { booking, customer, showtime, selectedSeats, selectedSnacks } = bookingData;
   const { showNotification } = useNotification();
 
@@ -22,8 +24,16 @@ function BookingConfirmation({ bookingData, resetBooking }) {
     window.print();
   };
 
-  const handleEmailReceipt = () => {
-    showNotification('Email receipt functionality is not yet implemented.', 'info');
+  const handleEmailReceipt = async () => {
+    setIsSendingEmail(true);
+    try {
+      const response = await api.post('/email/send-receipt', bookingData);
+      showNotification(response.message || 'Email receipt sent successfully!', 'success');
+    } catch (error) {
+      showNotification(error.response?.data?.error || 'Failed to send email receipt.', 'error');
+    } finally {
+      setIsSendingEmail(false);
+    }
   };
 
   return (
@@ -203,10 +213,20 @@ function BookingConfirmation({ bookingData, resetBooking }) {
         
         <button
           onClick={handleEmailReceipt}
-          className="flex items-center px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold transition-all duration-200 btn shadow-lg"
+          className="flex items-center justify-center w-48 px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold transition-all duration-200 btn shadow-lg disabled:bg-green-400 disabled:cursor-not-allowed"
+          disabled={isSendingEmail}
         >
-          <Mail className="w-5 h-5 mr-2" />
-          Email Receipt
+          {isSendingEmail ? (
+            <>
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+              <span>Sending...</span>
+            </>
+          ) : (
+            <>
+              <Mail className="w-5 h-5 mr-2" />
+              <span>Email Receipt</span>
+            </>
+          )}
         </button>
         
         <button
