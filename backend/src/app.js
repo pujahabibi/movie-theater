@@ -12,6 +12,7 @@ const seatRoutes = require('./interfaces/http/routes/seatRoutes');
 const snackRoutes = require('./interfaces/http/routes/snackRoutes');
 const bookingRoutes = require('./interfaces/http/routes/bookingRoutes');
 const emailRoutes = require('./interfaces/http/routes/emailRoutes');
+const authRoutes = require('./interfaces/http/routes/authRoutes');
 
 const app = express();
 
@@ -41,6 +42,7 @@ app.use('/api/seats', seatRoutes);
 app.use('/api/snacks', snackRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/email', emailRoutes);
+app.use('/api/auth', authRoutes);
 
 // Global 404 handler (Express 5.x compatible)
 app.use((req, res) => {
