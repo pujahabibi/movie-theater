@@ -91,7 +91,7 @@ function Checkout({ bookingData, updateBookingData, nextStep, prevStep }) {
       
       nextStep();
     } catch (error) {
-      alert(error.message || 'Failed to process booking. Please try again.');
+      showNotification(error.message || 'Failed to process booking. Please try again.', 'error');
     } finally {
       setLoading(false);
     }
