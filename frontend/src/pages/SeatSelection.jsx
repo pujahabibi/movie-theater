@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Users, DollarSign } from 'lucide-react';
 import api from '../api';
+import { useNotification } from '../providers/NotificationProvider';
 
 function SeatSelection({ bookingData, updateBookingData, nextStep, prevStep }) {
   const [seats, setSeats] = useState([]);
   const [seatMap, setSeatMap] = useState({});
+  const { showNotification } = useNotification();
   const [selectedSeats, setSelectedSeats] = useState(bookingData.selectedSeats || []);
   const [loading, setLoading] = useState(true);
   const [reserving, setReserving] = useState(false);
@@ -40,7 +42,7 @@ function SeatSelection({ bookingData, updateBookingData, nextStep, prevStep }) {
     } else {
       // Limit to 8 seats maximum
       if (selectedSeats.length >= 8) {
-        alert('You can select a maximum of 8 seats.');
+        showNotification('You can select a maximum of 8 seats.', 'error');
         return;
       }
       newSelection = [...selectedSeats, seat];
@@ -52,7 +54,7 @@ function SeatSelection({ bookingData, updateBookingData, nextStep, prevStep }) {
 
   const handleContinue = async () => {
     if (selectedSeats.length === 0) {
-      alert('Please select at least one seat.');
+      showNotification('Please select at least one seat.', 'error');
       return;
     }
 
@@ -67,7 +69,7 @@ function SeatSelection({ bookingData, updateBookingData, nextStep, prevStep }) {
       
       nextStep();
     } catch (error) {
-      alert(error.message || 'Failed to reserve seats. Please try again.');
+      showNotification(error.message || 'Failed to reserve seats. Please try again.', 'error');
       // Refresh seat data
       fetchSeats();
     } finally {
