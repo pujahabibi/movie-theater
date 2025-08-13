@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import MovieSelection from './pages/MovieSelection';
 import SeatSelection from './pages/SeatSelection';
@@ -14,7 +14,8 @@ function App() {
     selectedSeats: [],
     selectedSnacks: [],
     customer: null,
-    booking: null
+ booking: null,
+ sessionId: null
   });
   
   const navigate = useNavigate();
@@ -26,6 +27,12 @@ function App() {
     { id: 3, name: 'Add Snacks', path: '/snacks', icon: '🍿' },
     { id: 4, name: 'Checkout', path: '/checkout', icon: '💳' }
   ];
+
+  // Generate a unique session ID when the app loads
+  useEffect(() => {
+    const sessionId = `session-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+    updateBookingData({ sessionId });
+  }, []);
 
   const updateBookingData = (data) => {
     setBookingData(prev => ({ ...prev, ...data }));
@@ -46,7 +53,8 @@ function App() {
       selectedSeats: [],
       selectedSnacks: [],
       customer: null,
-      booking: null
+ booking: null,
+ sessionId: bookingData.sessionId // Preserve session ID
     });
     navigate('/movies');
   };
