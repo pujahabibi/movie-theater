@@ -1,8 +1,10 @@
 import React from 'react';
 import { CheckCircle, Calendar, MapPin, Users, Mail, Phone, Download, RotateCcw } from 'lucide-react';
+import { useNotification } from '../providers/NotificationProvider';
 
 function BookingConfirmation({ bookingData, resetBooking }) {
   const { booking, customer, showtime, selectedSeats, selectedSnacks } = bookingData;
+  const { showNotification } = useNotification();
 
   const formatTime = (dateString) => {
     return new Date(dateString).toLocaleString('en-US', {
@@ -21,8 +23,7 @@ function BookingConfirmation({ bookingData, resetBooking }) {
   };
 
   const handleEmailReceipt = () => {
-    // In a real app, this would send an email receipt
-    alert('Receipt has been sent to your email address!');
+    showNotification('Email receipt functionality is not yet implemented.', 'info');
   };
 
   return (
