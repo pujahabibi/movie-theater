@@ -9,7 +9,7 @@ function SeatSelection({ bookingData, updateBookingData, nextStep, prevStep }) {
   const [loading, setLoading] = useState(true);
   const [reserving, setReserving] = useState(false);
 
-  const { showtime } = bookingData;
+  const { showtime, sessionId } = bookingData;
 
   useEffect(() => {
     if (showtime) {
@@ -62,7 +62,7 @@ function SeatSelection({ bookingData, updateBookingData, nextStep, prevStep }) {
       const seatIds = selectedSeats.map(seat => seat.id);
       await api.post('/seats/reserve', {
         seatIds,
-        customerEmail: 'temp@example.com' // This would come from user input in a real app
+        customerEmail: `${sessionId}@temp-booking.com`
       });
       
       nextStep();
