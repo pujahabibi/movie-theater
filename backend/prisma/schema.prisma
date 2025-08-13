@@ -71,6 +71,19 @@ model Snack {
   @@map("snacks")
 }
 
+model User {
+  id        String    @id @default(cuid())
+  name      String    @db.VarChar(255)
+  email     String    @unique @db.VarChar(255)
+  password  String    @db.VarChar(255)
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  bookings  Booking[]
+
+  @@map("users")
+}
+
 model Booking {
   id            String   @id @default(cuid())
   showtimeId    String   @map("showtime_id")
@@ -80,10 +93,12 @@ model Booking {
   totalAmount   Decimal  @map("total_amount") @db.Decimal(10, 2)
   status        String   @default("confirmed") @db.VarChar(20)
   bookingDate   DateTime @default(now()) @map("booking_date")
+  userId        String?  @map("user_id")
   
   showtime      Showtime      @relation(fields: [showtimeId], references: [id])
   bookingSeats  BookingSeat[]
   bookingSnacks BookingSnack[]
+  user          User?         @relation(fields: [userId], references: [id])
   
   @@map("bookings")
 }
