@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowLeft, CreditCard, User, Mail, Phone, DollarSign, Calendar, MapPin, Users } from 'lucide-react';
 import api from '../api';
+import { useNotification } from '../providers/NotificationProvider';
 
 function Checkout({ bookingData, updateBookingData, nextStep, prevStep }) {
   const [customerData, setCustomerData] = useState({
@@ -8,6 +9,7 @@ function Checkout({ bookingData, updateBookingData, nextStep, prevStep }) {
     email: '',
     phone: ''
   });
+  const { showNotification } = useNotification();
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
